@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if user is an admin
+    function isAdmin() {
+      return request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Products: Anyone can view, but only admins can create, update, or delete
+    match /products/{product} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Orders: Users can create and see their own; Admins see everything
+    match /orders/{order} {
+      allow create: if request.auth != null;
+      allow read, write: if request.auth != null && 
+        (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // Users: Users manage their own profile; Admins manage all
+    match /users/{userId} {
+      allow read, write: if request.auth != null && 
+        (request.auth.uid == userId || isAdmin());
+    }
+    
+    // Support Messages: Authenticated users can send/see their own; Admins see all
+    match /conversations/{conversationId} {
+       allow read, write: if request.auth != null && 
+        (resource.data.participants.hasAny([request.auth.uid]) || isAdmin());
+       allow create: if request.auth != null;
+    }
+  }
+}
