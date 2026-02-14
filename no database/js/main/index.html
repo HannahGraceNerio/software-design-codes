@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Favored & Guided Engraving</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Personalized engraving services guided by faith and crafted with love." />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/style.css" />
+  <!-- ... existing head content ... -->
+  <script type="module" src="/js/firebase-config.js"></script>
+  <script type="module" src="/js/shared.js"></script>
+  <script type="module" src="/js/main/app.js"></script>
+</head>
+<body>
+
+<!-- HEADER/NAVBAR -->
+<header class="navbar" role="banner">
+  <div class="nav-left">
+    <img src="../../assets/logo.png" alt="Favored & Guided Logo" class="logo" />
+    <span class="brand">Favored & Guided</span>
+  </div>
+
+  <nav class="nav-center" role="navigation">
+    <a href="#" data-section="hero" onclick="showSection('hero')" class="active">Home</a>
+    <a href="#" data-section="products" onclick="showSection('products')">Products</a>
+    <a href="#" data-section="about" onclick="showSection('about')">About Us</a>
+  </nav>
+
+  <div class="nav-right" id="authButtons">
+    <button class="btn-outline" onclick="openAuthModal('login')" aria-label="Log In">Log In</button>
+    <button class="btn-primary" onclick="openAuthModal('signup')" aria-label="Sign Up">Sign Up</button>
+  </div>
+  <button id="logoutBtn" class="btn-primary" style="display:none;" onclick="logoutUser()">
+    Log Out
+  </button>
+</header>
+
+<!-- MAIN CONTENT -->
+<main>
+  <!-- HERO -->
+  <section id="hero" class="hero" role="banner">
+    <div class="hero-content">
+      <span class="badge">FAITH-INSPIRED CRAFTSMANSHIP</span>
+      <h1>Engrave Your Faith<br>Into Timeless Beauty</h1>
+      <p>
+        Personalized engraving services guided by faith and crafted with love.
+        Each piece tells your unique story.
+      </p>
+      <button class="btn-primary large" onclick="showSection('products')">Explore Products →</button>
+    </div>
+  </section>
+
+  <!-- PRODUCTS (Hidden by default, shown on link click) -->
+  <section id="products" class="section products-section" role="main">
+    <h2 class="section-title">Our Products</h2>
+    <p class="section-sub">Discover our collection of faith-inspired engravings</p>
+
+    <div class="products">
+      <!-- Products loaded dynamically via JS -->
+    </div>
+  </section>
+
+  <!-- ABOUT US (Hidden by default, shown on link click) -->
+  <section id="about" class="section about-section">
+    <h2 class="section-title">About Us</h2>
+    <p class="section-sub">Learn more about our mission and story</p>
+    <div class="about-content">
+      <p>At Favored & Guided Engraving, we believe that faith is the foundation of true craftsmanship. Founded in 2023, our team of skilled artisans creates personalized engravings that reflect your spiritual journey. Each piece is handcrafted with love, using high-quality materials to ensure durability and beauty.</p>
+      <p>Our mission is to help you express your faith through meaningful gifts and decor. Whether it's a custom cross pendant, a scripture plaque, or a faith bracelet, we guide every creation with prayer and dedication. Join our community of believers who cherish timeless pieces that inspire daily devotion.</p>
+      <p>Contact us today to start your personalized engraving project!</p>
+    </div>
+  </section>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer" role="contentinfo">
+  <div class="footer-grid">
+    <div class="footer-section">
+      <h4>Navigation</h4>
+      <a href="#hero">Home</a>
+      <a href="#products">Products</a>
+      <a href="#about">About Us</a>
+    </div>
+
+    <div class="footer-section">
+      <h4>Reach Us</h4>
+      <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+      <p><i class="fas fa-envelope"></i> info@favoredguided.com</p>
+    </div>
+  </div>
+  <p class="footer-bottom">&copy; 2023 Favored & Guided Engraving. All rights reserved.</p>
+</footer>
+
+<!-- AUTH MODAL -->
+<div class="modal" id="authModal" role="dialog" aria-labelledby="auth-title" aria-hidden="true">
+  <div class="modal-box">
+    <!-- Log In Form -->
+    <div id="loginSection">
+      <h3 id="auth-title">Log In</h3>
+      <button class="btn-facebook" onclick="loginWithFacebook()">
+        <i class="fa-brands fa-facebook"></i> Continue with Facebook
+      </button>
+      <button class="btn-google" onclick="loginWithGoogle()">
+        <i class="fa-brands fa-google"></i> Continue with Google
+      </button>
+      
+      <div class="divider">or</div>
+      
+      <form id="loginForm">
+        <input type="email" placeholder="Email" required aria-label="Email" />
+        <input type="password" placeholder="Password" required aria-label="Password" />
+        <button class="btn-primary" type="submit">Log In</button>
+      </form>
+      
+      <p class="modal-link" onclick="switchToSignup()">Don’t have an account? Sign Up</p>
+    </div>
+    
+    <!-- Sign Up Form (Hidden by Default) -->
+    <div id="signupSection" style="display: none;">
+      <h3>Sign Up</h3>
+      <button class="btn-facebook" onclick="signupWithFacebook()">
+        <i class="fa-brands fa-facebook"></i> Sign up with Facebook
+      </button>
+      <button class="btn-google" onclick="signupWithGoogle()">
+        <i class="fa-brands fa-google"></i> Sign up with Google
+      </button>
+      
+      <div class="divider">or</div>
+      
+      <form id="signupForm">
+        <input type="text" placeholder="Full Name" required aria-label="Full Name" />
+        <input type="email" placeholder="Email" required aria-label="Email" />
+        <input type="password" placeholder="Password" required aria-label="Password" />
+        <input type="password" placeholder="Confirm Password" required aria-label="Confirm Password" />
+        <button class="btn-primary" type="submit">Create Account</button>
+      </form>
+      
+      <p class="modal-link" onclick="switchToLogin()">Already have an account? Log In</p>
+    </div>
+    
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+  </div>
+</div>
+
+<!-- ORDER MODAL -->
+<div class="modal" id="orderModal" role="dialog" aria-hidden="true">
+  <div class="modal-box">
+    <h3 id="order-title">Complete Your Order</h3>
+    <div class="pickup-alert">
+      <strong>Pickup Order</strong>
+      <p>This is a pickup order. We'll contact you to arrange a convenient pickup time. Payment will be collected when you pick up your order.</p>
+    </div>
+    
+    <!-- User Details Section -->
+    <div class="user-details-section">
+      <h4>Your Details</h4>
+      <input type="text" id="userFullname" placeholder="Full Name *" required>
+      <input type="email" id="userEmail" placeholder="Email *" required>
+      <input type="tel" id="userPhone" placeholder="Phone Number *" required>
+      <button type="button" class="btn-outline" onclick="saveUserDetails()">Save Details</button>
+    </div>
+    
+    <div class="order-summary">
+      <div class="order-item">
+        <img src="https://picsum.photos/80/80?random=1" alt="">
+        <div>
+          <h4 id="orderProductLabel">Product Name</h4>
+          <span>Qty: <input type="number" id="orderQuantity" min="1" value="1" onchange="updateTotal()"></span>
+        </div>
+        <span class="order-price" id="orderPrice">₱89.99</span>
+      </div>
+    </div>
+    <form id="orderForm">
+      <input type="hidden" id="orderProduct" name="product">
+      <textarea name="notes" placeholder="Order Notes (Optional)" rows="3"></textarea>
+      <div class="payment-method">
+        <label>
+          <input type="radio" name="payment" checked>
+          Cash on Pickup
+        </label>
+        <small>Pay when you pick up your order</small>
+      </div>
+      <div class="order-total">
+        <span>Total</span>
+        <strong id="orderTotal">₱89.99</strong>
+      </div>
+      <button class="btn-primary" type="submit">Place Order</button>
+    </form>
+    <button class="modal-close" onclick="closeOrderModal()">&times;</button>
+  </div>
+</div>
+
+<!-- Product Details Modal -->
+<div class="modal" id="productDetailsModal">
+  <div class="modal-box product-details">
+    <button class="modal-close" onclick="closeProductDetails()">&times;</button>
+    <div class="details-grid">
+      <img id="detailsImage" src="" alt="Product Image">
+      <div class="details-info">
+        <span class="category" id="detailsCategory"></span>
+        <h2 id="detailsName"></h2>
+        <p id="detailsDescription"></p>
+        <p class="price" id="detailsPrice"></p>
+        <div class="quantity-section">
+          <label for="detailsQuantity">Quantity:</label>
+          <input type="number" id="detailsQuantity" min="1" value="1" onchange="updateDetailsTotal()">
+        </div>
+        <p>Total: <strong id="detailsTotal">₱0.00</strong></p>
+        <button class="btn-primary" onclick="orderFromDetails()">Place Order</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

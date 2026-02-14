@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - Favored & Guided Engraving</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Admin panel for managing products and orders." />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/style.css" />
+  <script type="module" src="/js/shared.js"></script>
+  <script type="module" src="/js/admin/admin.js"></script>
+  <script type="module" src="/js/firebase-config.js"></script>
+</head>
+<body>
+  <header class="navbar" role="banner">
+    <div class="nav-left">
+      <img src="../../assets/logo.png" alt="Favored & Guided Logo" class="logo" />
+      <span class="brand">Favored & Guided - Admin</span>
+    </div>
+    <nav class="nav-center" role="navigation">
+      <a href="#" data-section="products">Manage Products</a>
+      <a href="#" data-section="orders" class="active">Customer Orders</a>
+    </nav>
+    <div class="nav-right">
+      <button class="btn-primary">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- MANAGE PRODUCTS SECTION -->
+    <section id="products" class="section">
+      <h2>Manage Products</h2>
+      <button class="btn-primary">Add New Product</button>
+      <div id="adminProducts" class="admin-products-grid"></div>
+    </section>
+
+    <!-- CUSTOMER ORDERS SECTION -->
+    <section id="orders" class="section orders-section">
+      <h2>Customer Orders</h2>
+      <div class="order-tabs">
+        <button class="tab-btn active" data-tab="active">Active Orders</button>
+        <button class="tab-btn" data-tab="completed">Completed Orders</button>
+      </div>
+      <div class="tab-content active" id="activeOrdersTab">
+        <div id="adminOrders"></div>
+      </div>
+      <div class="tab-content" id="completedOrdersTab">
+        <div id="completedOrders"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Add Product Modal -->
+  <div class="modal" id="addProductModal">
+    <div class="modal-box">
+      <h3>Add New Product</h3>
+      <form id="addProductForm">
+        <input type="text" name="name" placeholder="Product Name *" required>
+        <input type="text" name="category" placeholder="Category *" required>
+        <input type="number" name="price" placeholder="Price *" step="0.01" required>
+        <input type="file" id="addImageFile" accept="image/*" required>
+        <img id="addImagePreview" src="" alt="Preview" style="max-width:100px; max-height:100px; display:none;">
+        <button class="btn-primary" type="submit">Add Product</button>
+      </form>
+      <button class="modal-close" onclick="closeAddProductModal()">&times;</button>
+    </div>
+  </div>
+
+  <!-- Edit Product Modal -->
+  <div class="modal" id="editProductModal">
+    <div class="modal-box">
+      <h3>Edit Product</h3>
+      <form id="editProductForm">
+        <input type="hidden" id="editProductIndex" name="index">
+        <input type="text" id="editName" name="name" placeholder="Product Name *" required>
+        <input type="text" id="editCategory" name="category" placeholder="Category *" required>
+        <input type="number" id="editPrice" name="price" placeholder="Price *" step="0.01" required>
+        <input type="file" id="editImageFile" accept="image/*">
+        <img id="editImagePreview" src="" alt="Preview" style="max-width:100px; max-height:100px; display:none;">
+        <button class="btn-primary" type="submit">Update Product</button>
+      </form>
+      <button class="modal-close" onclick="closeEditProductModal()">&times;</button>
+    </div>
+  </div>
+
+  <!-- Order Details Modal -->
+  <div class="modal" id="orderDetailsModal">
+    <div class="modal-box">
+      <h3>Order Details</h3>
+      <img id="orderDetailsImage" src="" alt="Product Image" style="max-width: 100%; height: auto; margin-bottom: 10px;">
+      <p><strong>Order ID:</strong> <span id="orderDetailsId"></span></p>
+      <p><strong>Product:</strong> <span id="orderDetailsProduct"></span></p>
+      <p><strong>Quantity:</strong> <span id="orderDetailsQuantity"></span></p>
+      <p><strong>Status:</strong> <span id="orderDetailsStatus"></span></p>
+      <p><strong>Full Name:</strong> <span id="orderDetailsFullname"></span></p>
+      <p><strong>Email:</strong> <span id="orderDetailsEmail"></span></p>
+      <p><strong>Phone:</strong> <span id="orderDetailsPhone"></span></p>
+      <p><strong>Notes:</strong> <span id="orderDetailsNotes"></span></p>
+      <button class="modal-close" onclick="closeOrderDetailsModal()">&times;</button>
+    </div>
+  </div>
+
+</body>
+</html>
