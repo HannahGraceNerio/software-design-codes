@@ -6,12 +6,14 @@ import { getStorage } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-st
 
 // REPLACE THIS WITH YOUR ACTUAL CONFIG FROM FIREBASE CONSOLE
 const firebaseConfig = {
-  apiKey: "AIzaSyCq3RPAsO3n7UBDAyh0rStQakWlrFnuM5M",
-  authDomain: "favored-guided-engraving-dae18.firebaseapp.com",
-  projectId: "favored-guided-engraving-dae18",
+  apiKey: "AIzaSyBr5kQpIGltxwbZtju1r3mYWR2wJix2hd4",
+  authDomain: "favored-guided-engraving.firebaseapp.com",
+  databaseURL: "https://favored-guided-engraving-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "favored-guided-engraving",
   storageBucket: "favored-guided-engraving.firebasestorage.app",
-  messagingSenderId: "526466641024",
-  appId: "1:526466641024:web:faff4dc79039a37c0f4a65",
+  messagingSenderId: "14707657229",
+  appId: "1:14707657229:web:ba43ba5e88ad21ebc5e344",
+  measurementId: "G-KWVLH7SP8R"
 };
 
 
@@ -24,3 +26,4 @@ const storage = getStorage(app);
 // Export for use in app.js
 
 export { auth, db, storage };
+
