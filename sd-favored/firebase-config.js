@@ -12,7 +12,6 @@ const firebaseConfig = {
   storageBucket: "favored-guided-engraving-dae18.firebasestorage.app",
   messagingSenderId: "526466641024",
   appId: "1:526466641024:web:faff4dc79039a37c0f4a65",
-  measurementId: "G-20P2Q6FV2E"
 };
 
 
