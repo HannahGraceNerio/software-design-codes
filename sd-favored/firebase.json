@@ -1,28 +1,10 @@
 {
-  "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    {
-      "source": "/user",
-      "destination": "/user.html"
-    },
-    {
-      "source": "/admin",
-      "destination": "/admin.html"
-    }
-  ],
   "hosting": {
     "public": ".",
     "ignore": [
       "firebase.json",
       "**/.*",
       "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
     ]
   }
 }
