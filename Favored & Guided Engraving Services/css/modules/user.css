@@ -1,0 +1,245 @@
+/* =========================================
+   USER.CSS 
+   ========================================= */
+.user-menu-dropdown {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 10px;
+  margin-bottom: -10px;
+}
+
+.dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--cream);
+  border: 1px solid var(--sand);
+  color: var(--walnut);
+  padding: 10px 20px;
+}
+
+.dropdown-toggle i {
+  font-size: 1.1rem;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background-color: white;
+  min-width: 240px;
+  box-shadow: var(--shadow-hover);
+  border-radius: var(--border-radius-md);
+  z-index: 1100;
+  overflow: hidden;
+  border: 1px solid var(--sand);
+  pointer-events: auto;
+  animation: fadeIn 0.2s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.user-menu-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropdown-content a {
+  color: var(--text-body);
+  padding: 14px 20px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  width: 100%;
+  transition: background 0.2s ease, color 0.2s;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.dropdown-content a:last-child {
+  border-bottom: none;
+}
+
+.dropdown-content a:hover {
+  background-color: var(--cream);
+  color: var(--primary);
+}
+
+.dropdown-content hr {
+  margin: 0;
+  border: none;
+  border-top: 1px solid var(--border-light);
+}
+
+.logout-link {
+  color: var(--terracotta) !important;
+  font-weight: 600;
+}
+
+.tracker-container {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid var(--border-light);
+  background: #fefcf9;
+  border-radius: var(--border-radius-md);
+  padding: 20px;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  margin: 10px 0;
+}
+
+.steps::before {
+  content: "";
+  position: absolute;
+  top: 20px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--sand);
+  z-index: 1;
+  border-radius: 2px;
+}
+
+.progress-line {
+  position: absolute;
+  top: 20px;
+  left: 0;
+  height: 4px;
+  background: var(--primary);
+  z-index: 2;
+  transition: width 0.4s ease;
+  border-radius: 2px;
+  box-shadow: 0 0 8px rgba(192,107,69,0.3);
+}
+
+.step-item {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  background: transparent;
+  padding: 0 5px;
+  flex: 1;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border: 3px solid var(--sand);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 8px;
+  font-size: 16px;
+  color: var(--taupe);
+  font-weight: bold;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(94,48,26,0.1);
+}
+
+.step-text {
+  font-size: 12px;
+  color: var(--taupe);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.step-item.active .step-circle {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba(192,107,69,0.2);
+}
+
+.step-item.active .step-text {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.step-item.completed .step-circle {
+  background: var(--golden);
+  border-color: var(--golden);
+  color: white;
+}
+
+.order-card .rejected-badge {
+  background: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: var(--border-radius-sm);
+  text-align: center;
+  font-weight: bold;
+  border-left: 4px solid #c62828;
+  margin-top: 15px;
+}
+
+#account .product-card {
+  background: white;
+  border: 1px solid var(--sand);
+  box-shadow: var(--shadow-soft);
+}
+
+#account p {
+  font-size: 1.1rem;
+  margin: 12px 0;
+  color: var(--text-body);
+}
+
+#account strong {
+  color: var(--walnut);
+  min-width: 80px;
+  display: inline-block;
+}
+
+#edit-details .product-card,
+#change-password .product-card {
+  max-width: 500px;
+  margin: 0 auto;
+  background: white;
+  border: 1px solid var(--sand);
+  padding: 40px;
+}
+
+#edit-details input,
+#change-password input {
+  background: var(--cream);
+}
+
+#hero {
+  min-height: 60vh !important;
+}
+
+#hero .hero-content {
+  text-align: center;
+}
+
+#hero h1 {
+  font-size: clamp(2.5rem, 4vw, 3.5rem);
+}
+
+#hero .badge {
+  background: white;
+  border-color: var(--golden);
+  color: var(--golden);
+  font-weight: 600;
+}
+
+#hero .hero-image > div {
+  transition: transform 0.3s ease;
+}
+
+#hero .hero-image > div:hover {
+  transform: scale(1.02);
+}

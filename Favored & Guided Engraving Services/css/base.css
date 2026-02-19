@@ -1,0 +1,28 @@
+/* =========================================
+   BASE.CSS - Main Import File
+   Load all modules in correct order
+   ========================================= */
+
+/* Core Variables - Must be first */
+@import url('modules/variables.css');
+
+/* Base Elements */
+@import url('modules/base-elements.css');
+
+/* Components (Desktop First) */
+@import url('modules/buttons.css');
+@import url('modules/navigation.css');
+@import url('modules/hero.css');
+@import url('modules/cards.css');
+@import url('modules/modals.css');
+@import url('modules/forms.css');
+@import url('modules/footer.css');
+@import url('modules/chat.css');
+@import url('modules/utilities.css');
+
+/* Page-specific styles (Desktop) */
+@import url('modules/admin.css');
+@import url('modules/user.css');
+
+/* Responsive Overrides - MUST BE LAST */
+@import url('modules/responsive.css');

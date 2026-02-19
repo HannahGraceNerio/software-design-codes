@@ -1,0 +1,158 @@
+/* =========================================
+   FORMS.CSS - Form and Input Styles
+   ========================================= */
+input, textarea, select {
+  width: 100%;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-sm);
+  background: #fefcf9;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--golden);
+  box-shadow: 0 0 0 3px rgba(212, 165, 95, 0.2);
+}
+
+.social-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.social-btn {
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: 50px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-weight: 500;
+  color: var(--text-body);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.social-btn:hover {
+  background: var(--cream);
+  border-color: var(--taupe);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: var(--taupe);
+  font-size: 14px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.divider:not(:empty)::before { margin-right: 15px; }
+.divider:not(:empty)::after { margin-left: 15px; }
+
+.input-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--walnut);
+}
+
+.input-group input {
+  margin-bottom: 0;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--taupe);
+  cursor: pointer;
+}
+
+.forgot-pass {
+  display: block;
+  text-align: right;
+  font-size: 12px;
+  color: var(--taupe);
+  margin-top: 8px;
+  text-decoration: none;
+}
+
+.input-hint {
+  font-size: 12px;
+  color: var(--taupe);
+  margin-top: 4px;
+  display: block;
+}
+
+.btn-auth-submit {
+  width: 100%;
+  background: var(--primary);
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-auth-submit:hover {
+  background: var(--primary-hover);
+}
+
+.auth-switch {
+  margin-top: 20px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.auth-switch span {
+  color: var(--terracotta);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#engravingText {
+  min-height: 100px;
+  resize: vertical;
+  background: var(--cream);
+  border: 1px solid var(--sand);
+}
+
+#orderQty {
+  width: 80px;
+  padding: 10px;
+  text-align: center;
+  border: 1px solid var(--sand);
+  border-radius: var(--border-radius-sm);
+}
+
+
