@@ -1,0 +1,54 @@
+/* =========================================
+   BASE-ELEMENTS.CSS - Global Styles
+   ========================================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  color: var(--text-body);
+  background-color: var(--cream);
+  background-image: 
+    repeating-linear-gradient(180deg, 
+      rgba(94, 48, 26, 0.04) 0px, 
+      rgba(94, 48, 26, 0.04) 2px, 
+      transparent 2px, 
+      transparent 8px),
+    repeating-linear-gradient(90deg, 
+      rgba(139, 90, 43, 0.03) 0px, 
+      rgba(139, 90, 43, 0.03) 4px, 
+      transparent 4px, 
+      transparent 12px),
+    radial-gradient(circle at 20% 30%, rgba(212, 165, 95, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(94, 48, 26, 0.06) 0%, transparent 40%);
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  color: var(--text-heading);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Keep cards crisp with white background */
+.product-card, .order-card-admin, .stat-card, .modal-box {
+  background: white !important;
+  backdrop-filter: none;
+  border: 1px solid var(--sand);
+  box-shadow: 0 10px 25px rgba(94, 48, 26, 0.1);
+}
+
+.product-card:hover, .order-card-admin:hover {
+  background: linear-gradient(145deg, white, rgba(251, 242, 233, 0.3)) !important;
+}
+
+.wood-texture {
+  background-image: repeating-linear-gradient(45deg, rgba(94,48,26,0.02) 0px, rgba(94,48,26,0.02) 2px, transparent 2px, transparent 4px);
+}

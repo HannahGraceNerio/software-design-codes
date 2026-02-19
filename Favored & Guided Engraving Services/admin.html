@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <title>Admin Dashboard | Favored & Guided</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/admin.css" />
 </head>
 <body>
 
@@ -23,7 +22,7 @@
         <a href="javascript:void(0)" onclick="showAdminSection('admin-chat')" id="nav-admin-chat" style="color: rgba(255,255,255,0.8);">💬 Messages</a>
     </nav>
     <div class="nav-right">
-        <button class="btn-primary" onclick="logoutAdmin()" style="background: white; color: var(--walnut); border: none;">
+        <button class="btn-primary" onclick="logoutAdmin()">
             <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
         </button>
     </div>
@@ -32,7 +31,7 @@
 <main class="section" style="padding-top: 40px;">
 
     <!-- Dashboard Stats Cards -->
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 40px;" id="stats-container">
+    <div class="stats-grid" id="stats-container" style="display: grid;">
         <div class="stat-card" style="background: white; padding: 25px; border-radius: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft);">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
@@ -136,41 +135,102 @@
             <p style="color: var(--taupe);">Chat with customers and resolve inquiries</p>
         </div>
         
-        <div style="display: grid; grid-template-columns: 300px 1fr; gap: 25px; height: 600px; background: white; border-radius: 30px; overflow: hidden; box-shadow: var(--shadow-soft); border: 1px solid var(--sand);">
+        <div class="chat-container-admin">
             <!-- User List Sidebar -->
-            <div id="adminChatUserList" style="border-right: 1px solid var(--border-light); overflow-y: auto; background: #fefcf9; padding: 20px;">
-                <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-light);">
-                    <h3 style="font-size: 1.1rem; color: var(--walnut);">Active Conversations</h3>
-                    <p style="font-size: 0.85rem; color: var(--taupe);">3 active chats</p>
+            <div class="chat-users-sidebar">
+                <div class="chat-users-header">
+                    <h3>Active Conversations</h3>
+                    <input type="text" id="userSearch" placeholder="Search customers..." />
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="filterChatUsers('all')">
+                            <i class="fas fa-users"></i> All
+                        </button>
+                        <button class="quick-action-btn" onclick="filterChatUsers('unread')">
+                            <i class="fas fa-envelope"></i> Unread
+                        </button>
+                        <button class="quick-action-btn" onclick="filterChatUsers('online')">
+                            <i class="fas fa-circle" style="color: #2ecc71;"></i> Online
+                        </button>
+                    </div>
                 </div>
-                <!-- Users will be loaded here -->
+                <div class="chat-users-list" id="adminChatUserList"></div>
             </div>
             
-            <!-- Chat Area -->
-            <div style="display: flex; flex-direction: column; background: #fff;">
-                <div style="padding: 20px 25px; border-bottom: 1px solid var(--border-light); background: var(--cream);">
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <div style="width: 40px; height: 40px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;" id="selectedUserInitial">👤</div>
-                        <div>
-                            <h4 style="font-size: 1rem; margin-bottom: 2px;" id="selectedUserName">Select a customer</h4>
-                            <p style="font-size: 0.8rem; color: var(--taupe);" id="selectedUserStatus">Choose conversation to start</p>
+            <!-- Main Chat Area -->
+            <div class="chat-main">
+                <!-- Chat Header with Selected User Info -->
+                <div class="chat-header-area">
+                    <div class="selected-user-info">
+                        <div class="selected-user-avatar" id="selectedUserAvatar">A</div>
+                        <div class="selected-user-details">
+                            <h4 id="selectedCustomerName">Select a conversation</h4>
+                            <div class="user-status">
+                                <span class="status-dot"></span>
+                                <span id="customerStatus">Offline</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div id="adminChatMessages" class="chat-messages" style="flex: 1; padding: 25px; background: #fefcf9; overflow-y: auto;">
-                    <div class="empty-state" style="border: none; background: transparent;">
-                        <i class="fas fa-comments" style="font-size: 50px; color: var(--sand);"></i>
-                        <p style="color: var(--taupe); margin-top: 15px;">Select a conversation to start replying</p>
+                    <div class="chat-actions">
+                        <button class="btn-icon" onclick="toggleCustomerInfo()" title="Customer Info">
+                            <i class="fas fa-user-circle"></i>
+                        </button>
+                        <button class="btn-icon" onclick="refreshChat()" title="Refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
                     </div>
                 </div>
                 
-                <div class="chat-input" style="padding: 20px 25px; border-top: 1px solid var(--border-light); background: white;">
-                    <div style="display: flex; gap: 12px;">
-                        <input type="text" id="adminChatInput" placeholder="Type your reply here..." style="margin-bottom: 0; border-radius: 30px; padding: 14px 20px;">
-                        <button onclick="sendAdminMessage()" style="width: 52px; height: 52px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; transition: all 0.2s;">
+                <!-- Customer Info Panel (Expandable) -->
+                <div class="customer-info-panel" id="customerInfoPanel">
+                    <div class="customer-info-header">
+                        <h4>Customer Information</h4>
+                        <button class="btn-icon" onclick="toggleCustomerInfo()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="customer-details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Full Name</div>
+                            <div class="detail-value" id="infoName">Loading...</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value" id="infoEmail">Loading...</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Phone</div>
+                            <div class="detail-value" id="infoPhone">Loading...</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Total Orders</div>
+                            <div class="detail-value" id="infoOrders">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="customer-orders-preview" id="customerOrdersPreview">
+                        <h5 style="margin-bottom: 15px;">Recent Orders</h5>
+                        <div id="recentOrdersList"></div>
+                    </div>
+                    
+                    <button class="btn-outline" onclick="loadFullCustomerHistory()" style="width: 100%; margin-top: 15px;">
+                        View Full History
+                    </button>
+                </div>
+                
+                <!-- Messages Area -->
+                <div class="chat-messages-area" id="adminChatMessages"></div>
+                
+                <!-- Chat Input Area -->
+                <div class="chat-input-area">
+                    <div class="chat-input-wrapper">
+                        <input type="text" id="adminChatInput" placeholder="Type your reply here..." />
+                        <button class="btn-send" onclick="sendAdminMessage()">
                             <i class="fas fa-paper-plane"></i>
                         </button>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 0.8rem; color: var(--taupe);">
+                        <span><i class="fas fa-enter"></i> Enter to send</span>
+                        <span><i class="fas fa-user-circle"></i> Esc to clear</span>
                     </div>
                 </div>
             </div>
@@ -286,7 +346,40 @@
         </div>
     </div>
 </template>
-
+<footer class="footer" style="margin-top: 50px;">
+    <div class="footer-container">
+        <div class="footer-col">
+            <h3>Favored & Guided</h3>
+            <p>Admin Dashboard - Managing faith-inspired wooden engravings with care and precision.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+            </div>
+        </div>
+        
+        <div class="footer-col">
+            <h4>Admin Links</h4>
+            <ul>
+                <li><a href="javascript:void(0)" onclick="showAdminSection('products')">Products</a></li>
+                <li><a href="javascript:void(0)" onclick="showAdminSection('orders')">Orders</a></li>
+                <li><a href="javascript:void(0)" onclick="showAdminSection('admin-chat')">Messages</a></li>
+                <li><a href="/">View Site</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-col">
+            <h4>System Info</h4>
+            <p><i class="fas fa-database"></i> v2.0.1</p>
+            <p><i class="fas fa-clock"></i> Last updated: 2026</p>
+            <p><i class="fas fa-shield-alt"></i> Secure Admin Panel</p>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2026 Favored & Guided Engraving. Admin Dashboard v2.0</p>
+    </div>
+</footer>
 <script type="module" src="admin.js"></script>
 </body>
 </html>

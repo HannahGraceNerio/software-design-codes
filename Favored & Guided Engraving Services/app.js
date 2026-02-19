@@ -133,14 +133,26 @@ async function syncUserToFirestore(user) {
 }
 
 // --- EXPORT TO WINDOW (Fixes Click Issue) ---
-
 window.showSection = (id) => {
+    // Hide all sections
     ['hero', 'products', 'about'].forEach(sec => {
         const el = document.getElementById(sec);
         if (el) el.style.display = (sec === id) ? 'block' : 'none';
     });
-    // Remove active class from all links
-    document.querySelectorAll('.nav-center a').forEach(a => a.classList.remove('active'));
+    
+    // Update active state of navigation links
+    document.querySelectorAll('.nav-center a').forEach(a => {
+        a.classList.remove('active');
+        // Reset the color (in case inline styles were applied)
+        a.style.color = "";
+    });
+    
+    // Find the clicked link and mark it as active
+    const activeLink = document.querySelector(`.nav-center a[onclick*="'${id}'"]`);
+    if (activeLink) {
+        activeLink.classList.add('active');
+        activeLink.style.color = "white"; // Match the admin panel styling
+    }
 };
 
 window.openModal = (id) => {
@@ -154,8 +166,16 @@ window.closeModal = (id) => {
 };
 
 window.toggleAuth = (type) => {
-    document.getElementById('loginSection').style.display = (type === 'signup') ? 'none' : 'block';
-    document.getElementById('signupSection').style.display = (type === 'signup') ? 'block' : 'none';
+    const login = document.getElementById('loginSection');
+    const signup = document.getElementById('signupSection');
+    
+    if (type === 'signup') {
+        login.style.display = 'none';
+        signup.style.display = 'block';
+    } else {
+        login.style.display = 'block';
+        signup.style.display = 'none';
+    }
 };
 
 // --- SOCIAL AUTHENTICATION ---
@@ -303,5 +323,3 @@ window.sendMessage = async () => {
 };
 
 document.addEventListener("DOMContentLoaded", renderProducts);
-
-

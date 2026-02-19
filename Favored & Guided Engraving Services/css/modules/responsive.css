@@ -1,0 +1,608 @@
+/* =========================================
+   RESPONSIVE.CSS - All Mobile/Tablet Overrides
+   ========================================= */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  #stats-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .section {
+    padding: 60px 5% !important;
+  }
+  
+  .hero h1 {
+    font-size: clamp(2.2rem, 4vw, 3rem) !important;
+  }
+  
+  .hero-content {
+    max-width: 450px !important;
+  }
+  
+  .hero-image {
+    max-width: 350px !important;
+  }
+}
+
+/* Mobile (under 768px) */
+@media (max-width: 768px) {
+  /* Grid Systems - Always 2 columns on mobile */
+  .products-grid,
+  .order-grid,
+  #adminProducts,
+  #wishlist .products-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 15px !important;
+  }
+  
+  /* Typography */
+  .section-title {
+    font-size: 2rem !important;
+  }
+  
+  .section-sub {
+    font-size: 1rem !important;
+  }
+  
+  h1 {
+    font-size: clamp(2rem, 8vw, 2.5rem) !important;
+  }
+  
+  h2 {
+    font-size: clamp(1.5rem, 6vw, 2rem) !important;
+  }
+  
+  /* Layout */
+  .section {
+    padding: 40px 4% !important;
+  }
+  
+  /* Hero Section */
+  .hero {
+    min-height: auto !important;
+    padding: 40px 0 !important;
+  }
+  
+  .hero > div {
+    flex-direction: column !important;
+    gap: 30px !important;
+  }
+  
+  .hero-content {
+    max-width: 100% !important;
+    padding: 0 20px !important;
+  }
+  
+  .hero-image {
+    max-width: 280px !important;
+    margin-left: 0 !important;
+  }
+  
+  .hero-content div[style*="gap: 15px"] {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  
+  .hero-content button {
+    width: 100% !important;
+    min-width: auto !important;
+  }
+  
+  /* Navigation */
+  .navbar {
+    flex-direction: column !important;
+    gap: 15px !important;
+    padding: 15px !important;
+  }
+  
+  .nav-left {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  
+  .nav-center {
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+  
+  .nav-center a {
+    margin: 0 !important;
+    padding: 6px 12px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .nav-right {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  
+  .nav-right .btn-outline,
+  .nav-right .btn-primary {
+    padding: 8px 16px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .user-menu-dropdown {
+    width: 100% !important;
+  }
+  
+  .dropdown-toggle {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+  
+  .dropdown-content {
+    width: 100% !important;
+    min-width: auto !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+  
+  /* Stats Cards */
+  #stats-container {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+    padding: 0 4% !important;
+    margin-bottom: 30px !important;
+  }
+  
+  .stat-card {
+    padding: 20px !important;
+  }
+  
+  .stat-card h3 {
+    font-size: 1.8rem !important;
+  }
+  
+  /* Admin Section Headers */
+  #products > div:first-child,
+  #orders > div:first-child,
+  #admin-chat > div:first-child {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+  }
+  
+  #products > div:first-child button {
+    width: 100% !important;
+  }
+  
+  /* Order Filters */
+  #orders > div:nth-child(2) {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  
+  .filter-btn {
+    width: 100% !important;
+    padding: 12px !important;
+  }
+  
+  /* Admin Chat */
+  #admin-chat > div[style*="grid-template-columns: 300px 1fr"] {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+    min-height: 500px !important;
+  }
+  
+  #adminChatUserList {
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border-light) !important;
+  }
+  
+  .user-tab {
+    padding: 12px !important;
+  }
+  
+  .user-tab .user-name-text {
+    max-width: 150px !important;
+  }
+  
+  #adminChatMessages {
+    height: 300px !important;
+    max-height: 300px !important;
+    padding: 15px !important;
+  }
+  
+  #adminChatMessages .msg {
+    max-width: 85% !important;
+    padding: 10px 15px !important;
+  }
+  
+  .chat-input {
+    padding: 15px !important;
+  }
+  
+  /* Admin Order Cards */
+  .order-card-admin {
+    padding: 20px !important;
+  }
+  
+  .order-card-admin > div:nth-child(2) {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+  }
+  
+  .order-img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 150px !important;
+  }
+  
+  .order-info {
+    width: 100% !important;
+  }
+  
+  .order-info h4 {
+    font-size: 1.1rem !important;
+  }
+  
+  /* Admin Product Cards */
+  #adminProducts .product-card {
+    padding: 12px !important;
+  }
+  
+  #adminProducts .product-card img {
+    aspect-ratio: 1/1;
+    margin-bottom: 10px;
+  }
+  
+  .admin-product-actions {
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+  }
+  
+  .btn-plus, .btn-minus, .btn-edit, .btn-delete {
+    padding: 6px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .stock-badge {
+    font-size: 0.65rem !important;
+    padding: 3px 8px !important;
+  }
+  
+  /* Product Cards */
+  .product-card {
+    padding: 12px !important;
+  }
+  
+  .product-card h3 {
+    font-size: 1rem !important;
+    margin: 8px 0 4px !important;
+  }
+  
+  .product-card .price {
+    font-size: 1.1rem !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .product-card button {
+    padding: 8px 12px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .wishlist-btn {
+    width: 32px !important;
+    height: 32px !important;
+    top: 8px !important;
+    right: 8px !important;
+  }
+  
+  .wishlist-btn i {
+    font-size: 14px !important;
+  }
+  
+  .quick-view-btn {
+    opacity: 1 !important;
+    position: relative !important;
+    bottom: auto !important;
+    margin-top: 15px !important;
+  }
+  
+  .product-card:hover {
+    transform: none !important;
+  }
+  
+  /* User Hero */
+  #hero {
+    min-height: auto !important;
+    padding: 30px 0 !important;
+  }
+  
+  #hero > div {
+    flex-direction: column-reverse !important;
+    gap: 30px !important;
+  }
+  
+  #hero .hero-content {
+    max-width: 100% !important;
+    padding: 0 20px !important;
+  }
+  
+  #hero .hero-image {
+    max-width: 250px !important;
+    margin-left: 0 !important;
+  }
+  
+  #hero h1 {
+    font-size: clamp(2rem, 6vw, 2.8rem) !important;
+  }
+  
+  #hero .hero-content div[style*="gap: 15px"] {
+    flex-direction: column !important;
+  }
+  
+  #hero .hero-content button {
+    width: 100% !important;
+  }
+  
+  /* Profile Grid */
+  #account > div {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  
+  #account .product-card {
+    padding: 20px !important;
+  }
+  
+  /* Order Tracker */
+  .tracker-container {
+    padding: 15px !important;
+  }
+  
+  .steps {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+  }
+  
+  .steps::before,
+  .progress-line {
+    display: none !important;
+  }
+  
+  .step-item {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+  }
+  
+  .step-circle {
+    margin: 0 !important;
+    width: 35px !important;
+    height: 35px !important;
+    font-size: 14px !important;
+  }
+  
+  .step-text {
+    font-size: 14px !important;
+  }
+  
+  /* Product Detail Modal */
+  .details-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  
+  #detailImg {
+    max-height: 250px !important;
+    object-fit: cover !important;
+  }
+  
+  #detailPrice {
+    font-size: 1.5rem !important;
+  }
+  
+  #orderQty {
+    width: 100% !important;
+  }
+  
+  /* Chat Messages */
+  #chat-messages .msg {
+    max-width: 90% !important;
+    font-size: 0.85rem !important;
+    padding: 10px 15px !important;
+  }
+  
+  /* Profile Forms */
+  #edit-details .product-card,
+  #change-password .product-card {
+    padding: 25px !important;
+    margin: 0 15px !important;
+  }
+  
+  #edit-details input,
+  #change-password input {
+    padding: 12px !important;
+  }
+  
+  /* Footer */
+  .footer {
+    padding: 40px 5% 20px !important;
+  }
+  
+  .footer-container {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+  }
+  
+  .footer-col {
+    padding: 15px !important;
+    text-align: center !important;
+  }
+  
+  .footer-col h3::after {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+  
+  .social-links {
+    justify-content: center !important;
+  }
+  
+  .footer-col p {
+    justify-content: center !important;
+  }
+  
+  /* Chat Container */
+  .chat-container {
+    width: calc(100% - 40px) !important;
+    max-width: 340px;
+    bottom: 10px !important;
+    right: 10px !important;
+  }
+  
+  /* Toast Notifications */
+  .toast {
+    min-width: auto !important;
+    width: calc(100% - 40px) !important;
+    left: 20px !important;
+    transform: translateX(0) translateY(100px) !important;
+    font-size: 0.9rem !important;
+    padding: 12px 20px !important;
+  }
+  
+  .toast.fade-out {
+    transform: translateX(0) translateY(20px) !important;
+  }
+  
+  /* Modal */
+  .modal-box {
+    margin: 10px !important;
+    padding: 25px !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+  
+  .auth-card {
+    padding: 25px !important;
+  }
+  
+  .auth-title {
+    font-size: 24px !important;
+  }
+  
+  .social-group {
+    gap: 8px !important;
+  }
+  
+  /* Touch Targets */
+  button, 
+  .btn-primary, 
+  .btn-outline,
+  .filter-btn,
+  .nav-center a,
+  .user-tab,
+  .dropdown-toggle,
+  .social-links a {
+    min-height: 44px !important;
+  }
+  
+  /* Smooth Scrolling */
+  .modal-box,
+  #adminChatMessages,
+  #chat-messages {
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Prevent Text Resize */
+  body {
+    -webkit-text-size-adjust: 100% !important;
+  }
+  
+  /* Form Inputs */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+}
+
+/* Very Small Phones (under 480px) */
+@media (max-width: 480px) {
+  .products-grid,
+  .order-grid,
+  #adminProducts,
+  #wishlist .products-grid {
+    gap: 10px !important;
+  }
+  
+  .product-card {
+    padding: 8px !important;
+  }
+  
+  .product-card h3 {
+    font-size: 0.9rem !important;
+  }
+  
+  .product-card .price {
+    font-size: 1rem !important;
+  }
+  
+  .product-card button {
+    padding: 6px 8px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  #adminProducts .product-card img {
+    aspect-ratio: 16/9 !important;
+  }
+  
+  .order-card-admin > div:first-child {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+  
+  .order-id, .order-date {
+    width: 100% !important;
+    text-align: center !important;
+  }
+  
+  .nav-center {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  
+  .nav-center a {
+    width: 100% !important;
+    text-align: center !important;
+  }
+  
+  .nav-right {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  
+  .nav-right button {
+    width: 100% !important;
+  }
+  
+  .hero-image {
+    max-width: 240px !important;
+  }
+}
+
+/* Fluid Typography */
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 12px;
+  }
+}
