@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard | Favored & Guided</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+
+<!-- Improved Navbar -->
+<header class="navbar" style="background: var(--walnut); backdrop-filter: none; border-bottom: 2px solid var(--golden);">
+    <div class="nav-left" style="display: flex; align-items: center;">
+        <img src="assets/logo.png" alt="Logo" style="width: 40px; height: 40px; border-radius: 10px; margin-right: 15px; background: white; padding: 5px;">
+        <span class="brand" style="color: white; font-size: 1.4rem;">Admin Dashboard</span>
+    </div>
+    <nav class="nav-center">
+        <a href="javascript:void(0)" onclick="showAdminSection('products')" class="active" id="nav-products" style="color: white;">📦 Products</a>
+        <a href="javascript:void(0)" onclick="showAdminSection('orders')" id="nav-orders" style="color: rgba(255,255,255,0.8);">📋 Orders</a>
+        <a href="javascript:void(0)" onclick="showAdminSection('admin-chat')" id="nav-admin-chat" style="color: rgba(255,255,255,0.8);">💬 Messages</a>
+    </nav>
+    <div class="nav-right">
+        <button class="btn-primary" onclick="logoutAdmin()" style="background: white; color: var(--walnut); border: none;">
+            <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+        </button>
+    </div>
+</header>
+
+<main class="section" style="padding-top: 40px;">
+
+    <!-- Dashboard Stats Cards -->
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 40px;" id="stats-container">
+        <div class="stat-card" style="background: white; padding: 25px; border-radius: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="color: var(--taupe); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Total Orders</p>
+                    <h3 style="font-size: 2.2rem; margin: 0; color: var(--walnut);" id="totalOrders">0</h3>
+                </div>
+                <div style="width: 55px; height: 55px; background: var(--cream); border-radius: 18px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-shopping-bag" style="color: var(--primary); font-size: 26px;"></i>
+                </div>
+            </div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-light);">
+                <span style="color: var(--primary); font-weight: 600;" id="orderGrowth">+12%</span>
+                <span style="color: var(--taupe); font-size: 0.9rem; margin-left: 8px;">from last month</span>
+            </div>
+        </div>
+        
+        <div class="stat-card" style="background: white; padding: 25px; border-radius: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="color: var(--taupe); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Pending</p>
+                    <h3 style="font-size: 2.2rem; margin: 0; color: #856404;" id="pendingOrders">0</h3>
+                </div>
+                <div style="width: 55px; height: 55px; background: #fff3cd; border-radius: 18px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-clock" style="color: #856404; font-size: 26px;"></i>
+                </div>
+            </div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-light);">
+                <span style="color: #856404; font-weight: 600;" id="pendingAlert">Needs attention</span>
+            </div>
+        </div>
+        
+        <div class="stat-card" style="background: white; padding: 25px; border-radius: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="color: var(--taupe); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Products</p>
+                    <h3 style="font-size: 2.2rem; margin: 0; color: var(--walnut);" id="totalProducts">0</h3>
+                </div>
+                <div style="width: 55px; height: 55px; background: var(--cream); border-radius: 18px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-box" style="color: var(--primary); font-size: 26px;"></i>
+                </div>
+            </div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-light);">
+                <span style="color: var(--primary); font-weight: 600;" id="lowStock">0 low stock</span>
+                <span style="color: var(--taupe); font-size: 0.9rem; margin-left: 8px;">items</span>
+            </div>
+        </div>
+        
+        <div class="stat-card" style="background: white; padding: 25px; border-radius: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="color: var(--taupe); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Revenue</p>
+                    <h3 style="font-size: 2.2rem; margin: 0; color: #2e7d32;" id="totalRevenue">₱0</h3>
+                </div>
+                <div style="width: 55px; height: 55px; background: #d4edda; border-radius: 18px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-peso-sign" style="color: #2e7d32; font-size: 26px;"></i>
+                </div>
+            </div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-light);">
+                <span style="color: #2e7d32; font-weight: 600;" id="revenueMonth">This month</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <section id="products" style="display: block;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h2 style="font-size: 2rem; margin-bottom: 5px;">Product Management</h2>
+                <p style="color: var(--taupe);">Manage your inventory and product details</p>
+            </div>
+            <button class="btn-primary" onclick="openModal('addProductModal')" style="padding: 14px 28px;">
+                <i class="fas fa-plus" style="margin-right: 8px;"></i> Add New Product
+            </button>
+        </div>
+        <div class="products-grid" id="adminProducts" style="gap: 30px;"></div>
+    </section>
+
+    <!-- Orders Section -->
+    <section id="orders" style="display: none;">
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 5px;">Customer Orders</h2>
+            <p style="color: var(--taupe);">Track and manage all customer orders</p>
+        </div>
+        
+        <!-- Order Filters -->
+        <div style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap;">
+            <button class="filter-btn active" onclick="filterOrders('all')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: var(--primary); color: white; font-weight: 600;">All Orders</button>
+            <button class="filter-btn" onclick="filterOrders('pending')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">Pending</button>
+            <button class="filter-btn" onclick="filterOrders('preparing')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">Preparing</button>
+            <button class="filter-btn" onclick="filterOrders('ready')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">Ready</button>
+            <button class="filter-btn" onclick="filterOrders('completed')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">Completed</button>
+        </div>
+        
+        <div class="order-grid" id="admin-orders-container" style="gap: 20px;"></div>
+    </section>
+
+    <!-- Chat Section -->
+    <section id="admin-chat" style="display: none;">
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 5px;">Customer Support Hub</h2>
+            <p style="color: var(--taupe);">Chat with customers and resolve inquiries</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 300px 1fr; gap: 25px; height: 600px; background: white; border-radius: 30px; overflow: hidden; box-shadow: var(--shadow-soft); border: 1px solid var(--sand);">
+            <!-- User List Sidebar -->
+            <div id="adminChatUserList" style="border-right: 1px solid var(--border-light); overflow-y: auto; background: #fefcf9; padding: 20px;">
+                <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border-light);">
+                    <h3 style="font-size: 1.1rem; color: var(--walnut);">Active Conversations</h3>
+                    <p style="font-size: 0.85rem; color: var(--taupe);">3 active chats</p>
+                </div>
+                <!-- Users will be loaded here -->
+            </div>
+            
+            <!-- Chat Area -->
+            <div style="display: flex; flex-direction: column; background: #fff;"> 
+                <div id="adminChatMessages" class="chat-messages" style="flex: 1; padding: 25px; background: #fefcf9; overflow-y: auto;">
+                    <div class="empty-state" style="border: none; background: transparent;">
+                        <i class="fas fa-comments" style="font-size: 50px; color: var(--sand);"></i>
+                        <p style="color: var(--taupe); margin-top: 15px;">Select a conversation to start replying</p>
+                    </div>
+                </div>
+                
+                <div class="chat-input" style="padding: 20px 25px; border-top: 1px solid var(--border-light); background: white;">
+                    <div style="display: flex; gap: 12px;">
+                        <input type="text" id="adminChatInput" placeholder="Type your reply here..." style="margin-bottom: 0; border-radius: 30px; padding: 14px 20px;">
+                        <button onclick="sendAdminMessage()" style="width: 52px; height: 52px; border-radius: 50%; background: var(--primary); color: white; border: none; cursor: pointer; transition: all 0.2s;">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Add Product Modal (Improved) -->
+<div class="modal" id="addProductModal">
+    <div class="modal-box" style="max-width: 500px; padding: 45px;">
+        <button class="modal-close" onclick="closeModal('addProductModal')">&times;</button>
+        <h3 style="font-size: 1.8rem; margin-bottom: 30px; text-align: center;">Add New Product</h3>
+        
+        <div style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Product Name</label>
+            <input type="text" id="addName" placeholder="e.g., Wooden Cross Engraving" style="padding: 14px;" />
+        </div>
+        
+        <div style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Price (₱)</label>
+            <input type="number" id="addPrice" placeholder="0.00" min="0" step="0.01" style="padding: 14px;" />
+        </div>
+        
+        <div style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Initial Stock</label>
+            <input type="number" id="addStock" value="10" min="0" style="padding: 14px;" />
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Product Image</label>
+            <div style="border: 2px dashed var(--sand); border-radius: 15px; padding: 30px; text-align: center; background: var(--cream); cursor: pointer;" onclick="document.getElementById('addImageFile').click()">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 40px; color: var(--primary); margin-bottom: 10px; display: block;"></i>
+                <p style="color: var(--taupe);">Click to upload or drag and drop</p>
+                <p style="font-size: 0.8rem; color: var(--sand);">PNG, JPG up to 5MB</p>
+            </div>
+            <input type="file" id="addImageFile" accept="image/*" style="display: none;" onchange="updateFileName(this)">
+        </div>
+        
+        <button class="btn-primary" style="width: 100%; padding: 16px;" onclick="addProduct()">
+            <i class="fas fa-save" style="margin-right: 8px;"></i> Save Product
+        </button>
+    </div>
+</div>
+
+<!-- Edit Product Modal (Improved) -->
+<div class="modal" id="editProductModal">
+    <div class="modal-box" style="max-width: 500px; padding: 45px;">
+        <button class="modal-close" onclick="closeModal('editProductModal')">&times;</button>
+        <h3 style="font-size: 1.8rem; margin-bottom: 30px; text-align: center;">Edit Product</h3>
+        
+        <div style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Product Name</label>
+            <input type="text" id="editName" style="padding: 14px;">
+        </div>
+        
+        <div style="margin-bottom: 25px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Price (₱)</label>
+            <input type="number" id="editPrice" style="padding: 14px;">
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Stock</label>
+            <input type="number" id="editStock" style="padding: 14px;">
+        </div>
+        
+        <button class="btn-primary" style="width: 100%; padding: 16px;" onclick="saveProductEdit()">
+            <i class="fas fa-check" style="margin-right: 8px;"></i> Update Product
+        </button>
+    </div>
+</div>
+
+<!-- Templates (Keep as is) -->
+<template id="product-template">
+    <div class="product-card" style="position: relative;">
+        <div style="position: absolute; top: 15px; left: 15px; background: var(--primary); color: white; padding: 4px 12px; border-radius: 30px; font-size: 0.7rem; font-weight: 600; z-index: 2;" class="stock-badge"></div>
+        <img class="p-img" src="" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 20px;">
+        <h3 class="p-name" style="margin: 15px 0 5px;"></h3>
+        <p class="p-price" style="font-size: 1.3rem; color: var(--primary); font-weight: 700;"></p>
+        <p class="p-stock" style="font-size: 0.9rem; margin-bottom: 15px;"></p>
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <button class="btn-outline btn-plus" style="flex: 1; padding: 10px;">+ Add Stock</button>
+            <button class="btn-outline btn-minus" style="flex: 1; padding: 10px;">- Remove</button>
+        </div>
+        
+        <div style="display: flex; gap: 8px;">
+            <button class="btn-primary btn-edit" style="flex: 1; padding: 10px; background: var(--golden);">Edit</button>
+            <button class="btn-outline btn-delete" style="flex: 1; padding: 10px; color: #e53935; border-color: #ffcdd2;">Delete</button>
+        </div>
+    </div>
+</template>
+
+<template id="order-template">
+    <div class="order-card-admin" style="background: white; border-radius: 25px; padding: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <span class="order-id" style="background: var(--cream); padding: 5px 15px; border-radius: 30px; font-weight: 700; color: var(--primary);"></span>
+            <span class="order-date" style="color: var(--taupe); font-size: 0.85rem;"></span>
+        </div>
+        
+        <div style="display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-light);">
+            <img class="order-img" src="" style="width: 80px; height: 80px; border-radius: 15px; object-fit: cover;">
+            <div style="flex: 1;">
+                <h4 class="order-product-name" style="margin: 0 0 5px;"></h4>
+                <p class="order-email" style="font-size: 0.85rem; color: var(--taupe); margin: 2px 0;"></p>
+                <p class="order-total" style="font-weight: 700; color: var(--primary); margin: 5px 0;"></p>
+                <p class="order-note" style="font-size: 0.85rem; color: var(--taupe); background: var(--cream); padding: 5px 10px; border-radius: 8px; display: inline-block;"></p>
+            </div>
+        </div>
+        
+        <div>
+            <label style="display: block; margin-bottom: 10px; font-weight: 600; color: var(--walnut);">Update Status</label>
+            <select class="status-select" style="width: 100%; padding: 12px; border-radius: 30px; border: 1px solid var(--sand);"></select>
+        </div>
+    </div>
+</template>
+
+<script type="module" src="admin.js"></script>
+</body>
+</html>
