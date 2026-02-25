@@ -1085,8 +1085,22 @@ function listenForMessages() {
     chatListener = onSnapshot(q, (snapshot) => {
         container.innerHTML = ""; 
         
-        if (snapshot.empty) return;
+        // --- NEW: AUTOMATED GREETING MESSAGE ---
+        // This will always show at the top of the chat!
+        const welcomeMsg = document.createElement('div');
+        welcomeMsg.className = `msg-wrapper admin`; 
+        
+        // Note: I added color: var(--walnut) to make sure the text is readable on the cream background!
+        welcomeMsg.innerHTML = `
+            <div class="msg admin" style="background: var(--cream); color: var(--walnut); border: 1px solid var(--border-light);">
+                <strong>Favored & Guided ✨</strong><br><br>
+                Hi there! 👋 Welcome to our shop. How can we help you with your custom engraving today?
+            </div>
+            <div class="msg-time" style="color: var(--taupe);">Automated</div>
+        `;
+        container.appendChild(welcomeMsg);
 
+        // --- LOAD REAL MESSAGES ---
         snapshot.forEach(docSnap => {
             const m = docSnap.data();
             const side = m.sender === "user" ? "user" : "admin";
@@ -1100,7 +1114,7 @@ function listenForMessages() {
             const msgWrapper = document.createElement('div');
             msgWrapper.className = `msg-wrapper ${side}`;
           
-            // --- NEW: Create the visually rich Order Card ---
+            // --- Create the visually rich Order Card ---
             let orderChipHTML = "";
             if (m.linkedOrderId) {
                 const shortId = m.linkedOrderId.slice(-8).toUpperCase();
