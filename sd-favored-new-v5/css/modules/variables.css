@@ -1,0 +1,34 @@
+/* =========================================
+   VARIABLES.CSS - Theme Variables
+   ========================================= */
+:root {
+  /* Brand Color Palette */
+  --cream: #fbf2e9;
+  --taupe: #9f896f;
+  --terracotta: #944f26;
+  --golden: #d4a55f;
+  --sand: #e2c59a;
+  --walnut: #5e301a;
+
+  /* Role-based colors */
+  --primary: #c06b45;
+  --primary-hover: #a65d3a;
+  --bg-main: var(--cream);
+  --bg-card: #ffffff;
+  --text-heading: var(--walnut);
+  --text-body: #4a3a2e;
+  --text-muted: var(--taupe);
+  --border-light: var(--sand);
+  --accent: var(--golden);
+  --shadow-soft: 0 10px 30px rgba(94, 48, 26, 0.08);
+  --shadow-hover: 0 20px 40px rgba(94, 48, 26, 0.12);
+
+  /* Boutique Rounded Corners */
+  --border-radius-lg: 30px;
+  --border-radius-md: 20px;
+  --border-radius-sm: 12px;
+
+  /* Fonts */
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+}
