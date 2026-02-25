@@ -10,16 +10,16 @@
 </head>
 <body>
 
-<!-- Improved Navbar -->
-<header class="navbar" style="background: var(--walnut); backdrop-filter: none; border-bottom: 2px solid var(--golden);">
+<!-- Navbar -->
+<header class="navbar">
     <div class="nav-left" style="display: flex; align-items: center;">
         <img src="assets/logo.png" alt="Logo" style="width: 40px; height: 40px; border-radius: 10px; margin-right: 15px; background: white; padding: 5px;">
         <span class="brand" style="color: white; font-size: 1.4rem;">Admin Dashboard</span>
     </div>
     <nav class="nav-center">
-        <a href="javascript:void(0)" onclick="showAdminSection('products')" class="active" id="nav-products" style="color: white;">📦 Products</a>
-        <a href="javascript:void(0)" onclick="showAdminSection('orders')" id="nav-orders" style="color: rgba(255,255,255,0.8);">📋 Orders</a>
-        <a href="javascript:void(0)" onclick="showAdminSection('admin-chat')" id="nav-admin-chat" style="color: rgba(255,255,255,0.8);">💬 Messages</a>
+        <a href="javascript:void(0)" onclick="showAdminSection('products')" class="active" id="nav-products" style="color: white;">Products</a>
+        <a href="javascript:void(0)" onclick="showAdminSection('orders')" id="nav-orders" style="color: rgba(255,255,255,0.8);">Orders</a>
+        <a href="javascript:void(0)" onclick="showAdminSection('admin-chat')" id="nav-admin-chat" style="color: rgba(255,255,255,0.8);">Messages</a>
     </nav>
     <div class="nav-right">
         <button class="btn-primary" onclick="logoutAdmin()">
@@ -123,6 +123,7 @@
             <button class="filter-btn" onclick="filterOrders('preparing')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">Preparing</button>
             <button class="filter-btn" onclick="filterOrders('ready')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">Ready</button>
             <button class="filter-btn" onclick="filterOrders('completed')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">Completed</button>
+            <button class="filter-btn" onclick="filterOrders('cancelled')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid #e74c3c; background: white; color: #e74c3c; font-weight: 600;">Cancelled</button>
         </div>
         
         <div class="order-grid" id="admin-orders-container" style="gap: 20px;"></div>
@@ -294,6 +295,10 @@
         <div style="margin-bottom: 30px;">
             <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Stock</label>
             <input type="number" id="editStock" style="padding: 14px;">
+        </div>
+        <div style="margin-bottom: 30px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Image</label>
+            <input type="file" id="editImageFile" style="padding: 14px">
         </div>
         
         <button class="btn-primary" style="width: 100%; padding: 16px;" onclick="saveProductEdit()">

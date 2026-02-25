@@ -156,3 +156,26 @@ input:focus, textarea:focus, select:focus {
 }
 
 
+/* Remove browser's default password reveal icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-contacts-auto-fill-button,
+input[type="password"]::-webkit-strong-password-auto-fill-button {
+    display: none !important;
+    visibility: hidden;
+    pointer-events: none;
+    width: 0;
+    height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/* Ensure proper spacing for password inputs */
+.password-wrapper input {
+    padding-right: 40px !important;
+    margin-bottom: 0;
+}

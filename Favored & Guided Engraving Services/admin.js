@@ -1,6 +1,6 @@
 import { auth, db } from "./firebase-config.js";
 import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query, orderBy, onSnapshot, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { collection, addDoc, getDocs, doc, deleteDoc, updateDoc, query, orderBy, onSnapshot, where, getDoc, limit } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 let selectedUserId = null;
 let editingProductId = null;
@@ -370,27 +370,81 @@ window.loadOrders = () => {
 
     onSnapshot(query(collection(db, "orders"), orderBy("date", "desc")), (snapshot) => {
         container.innerHTML = "";
+        
+        if (snapshot.empty) {
+            container.innerHTML = '<p style="text-align: center; color: var(--taupe); width: 100%; padding: 40px;">No orders found.</p>';
+            return;
+        }
+
         snapshot.forEach(docSnap => {
             const o = docSnap.data();
             const id = docSnap.id;
-            const clone = template.content.cloneNode(true);
+            const clone = template.content.cloneNode(true);    
 
-            clone.querySelector('.order-id').textContent = `#${id.slice(0,6)}`;
-            clone.querySelector('.order-date').textContent = new Date(o.date).toLocaleDateString();
-            clone.querySelector('.order-img').src = o.imageUrl;
+            // Populate basic data
+            clone.querySelector('.order-id').textContent = `#${id.slice(-8).toUpperCase()}`;
+            clone.querySelector('.order-date').textContent = new Date(o.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            clone.querySelector('.order-img').src = o.imageUrl || 'assets/logo.png';
             clone.querySelector('.order-product-name').textContent = o.productName;
             clone.querySelector('.order-email').textContent = o.userEmail;
-            clone.querySelector('.order-total').textContent = `₱${o.totalPrice}`;
+            clone.querySelector('.order-total').textContent = `₱${o.totalPrice?.toLocaleString() || '0'}`;
             clone.querySelector('.order-note').textContent = `Note: ${o.personalization || "None"}`;
 
+            // --- DISPLAY CANCEL REASON ---
+            if (o.status === 'Cancelled') {
+                const reasonDiv = document.createElement('div');
+                reasonDiv.style.cssText = "background: #ffebee; color: #c62828; padding: 10px 15px; border-radius: 8px; margin-top: 15px; font-size: 0.9rem; border-left: 4px solid #c62828;";
+                reasonDiv.innerHTML = `
+                    <strong><i class="fas fa-ban" style="margin-right: 5px;"></i> Cancelled by Customer</strong><br>
+                    <span style="display: inline-block; margin-top: 5px;">Reason: ${o.cancelReason || 'No reason provided'}</span>
+                `;
+                
+                // Inject this red box right below the personalization note
+                const noteElement = clone.querySelector('.order-note');
+                noteElement.parentNode.insertBefore(reasonDiv, noteElement.nextSibling);
+
+                // Highlight the card border in red
+                const cardElement = clone.querySelector('.order-card-admin');
+                if(cardElement) cardElement.style.borderColor = '#e74c3c';
+            }
+
+            // --- STRICT DROPDOWN LOGIC ---
             const select = clone.querySelector('.status-select');
-            ["Pending", "Preparing", "Ready", "Completed", "Rejected"].forEach(stat => {
+            
+            if (o.status === 'Cancelled') {
+                // 1. If already cancelled, LOCK the dropdown.
                 const opt = document.createElement('option');
-                opt.value = stat; opt.textContent = stat;
-                if(o.status === stat) opt.selected = true;
+                opt.value = 'Cancelled'; 
+                opt.textContent = 'Cancelled';
+                opt.selected = true;
                 select.appendChild(opt);
-            });
-            select.onchange = (e) => updateOrderStatus(id, e.target.value);
+                
+                // Disable the select box so the admin cannot change it!
+                select.disabled = true; 
+                select.style.backgroundColor = '#ffebee';
+                select.style.color = '#c62828';
+                select.style.borderColor = '#e74c3c';
+                select.style.cursor = 'not-allowed';
+                select.style.opacity = '0.8';
+                
+            } else {
+                // 2. If it's a normal order, show standard options (Removed 'Cancelled' from this list)
+                ["Pending", "Preparing", "Ready", "Completed", "Rejected"].forEach(stat => {
+                    const opt = document.createElement('option');
+                    opt.value = stat; 
+                    opt.textContent = stat;
+                    if(o.status === stat) opt.selected = true;
+                    select.appendChild(opt);
+                });
+                
+                // Only allow changes if it's not locked
+                select.onchange = (e) => updateOrderStatus(id, e.target.value);
+            }
+
+            // Add an attribute so your filter buttons still work perfectly
+            const card = clone.querySelector('.order-card-admin');
+            if(card) card.setAttribute('data-status', o.status.toLowerCase());
+
             container.appendChild(clone);
         });
     });
@@ -400,24 +454,43 @@ window.updateOrderStatus = async (id, status) => await updateDoc(doc(db, "orders
 
 // Order filter function
 window.filterOrders = (status) => {
-    // Update active button state
+    // 1. Safely grab the actual button element
+    const activeBtn = event.target.closest('.filter-btn') || event.target;
+
+    // 2. Reset all buttons back to their unselected state
     document.querySelectorAll('.filter-btn').forEach(btn => {
         btn.classList.remove('active');
         btn.style.background = 'white';
-        btn.style.color = 'var(--text-body)';
+        
+        // Keep the cancelled button text/border red even when it's not selected
+        if (btn.textContent.trim() === 'Cancelled') {
+            btn.style.color = '#e74c3c';
+            btn.style.borderColor = '#e74c3c';
+        } else {
+            btn.style.color = 'var(--text-body)';
+            btn.style.borderColor = 'var(--sand)';
+        }
     });
     
-    const activeBtn = event.target;
+    // 3. Apply the 'Active' color to the clicked button
     activeBtn.classList.add('active');
-    activeBtn.style.background = 'var(--primary)';
     activeBtn.style.color = 'white';
     
-    // Filter orders
+    if (status === 'cancelled') {
+        activeBtn.style.background = '#e74c3c'; // Red for cancelled
+        activeBtn.style.borderColor = '#e74c3c';
+    } else {
+        activeBtn.style.background = 'var(--primary)'; // Brand color for others
+        activeBtn.style.borderColor = 'var(--primary)';
+    }
+    
+    // 4. Filter the order cards
     const orderCards = document.querySelectorAll('.order-card-admin');
     orderCards.forEach(card => {
         if (status === 'all') {
             card.style.display = 'block';
         } else {
+            // Read the current status directly from the dropdown menu
             const orderStatus = card.querySelector('.status-select')?.value?.toLowerCase();
             if (orderStatus === status) {
                 card.style.display = 'block';
@@ -427,13 +500,13 @@ window.filterOrders = (status) => {
         }
     });
 };
-
 // ==========================================
 // 5. CHAT SYSTEM 
 // ==========================================
 
 let unsubscribeMessages = null;
 let chatFilter = 'all'; // 'all', 'unread', 'online'
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('userSearch');
@@ -447,7 +520,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Keyboard shortcuts
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            document.getElementById('adminChatInput').value = '';
+            const chatInput = document.getElementById('adminChatInput');
+            if (chatInput) chatInput.value = '';
         }
     });
 });
@@ -462,19 +536,23 @@ document.addEventListener('keypress', (e) => {
     }
 });
 
-// Filter functions
+// FIX #2: Safely target the button even if the icon is clicked
 window.filterChatUsers = (filter) => {
     chatFilter = filter;
     
-    // Update active state of filter buttons
+    // 1. Reset all buttons to the default cream/brown styling
     document.querySelectorAll('.quick-action-btn').forEach(btn => {
         btn.style.background = 'var(--cream)';
         btn.style.color = 'var(--walnut)';
+        
+        // 2. If this button's HTML onclick matches our current filter, highlight it!
+        if (btn.getAttribute('onclick').includes(filter)) {
+            btn.style.background = 'var(--primary)';
+            btn.style.color = 'white';
+        }
     });
     
-    event.target.style.background = 'var(--primary)';
-    event.target.style.color = 'white';
-    
+    // 3. Re-draw the list
     renderUserList();
 };
 
@@ -482,7 +560,6 @@ function loadChatUsers() {
     const list = document.getElementById('adminChatUserList');
     if (!list) return;
 
-    // Listen to all chats, order by timestamp descending
     const q = query(collection(db, "chats"), orderBy("timestamp", "desc"));
     
     onSnapshot(q, (snapshot) => {
@@ -493,7 +570,13 @@ function loadChatUsers() {
             const uid = data.userId;
             const displayName = data.userName || data.userEmail || "Anonymous Customer";
             const msgText = data.text;
-            const msgTime = data.timestamp?.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
+            
+            // FIX #3: Safely handle missing timestamps to prevent sorting crashes
+            let msgTime = new Date();
+            if (data.timestamp) {
+                msgTime = data.timestamp.toDate ? data.timestamp.toDate() : new Date(data.timestamp);
+            }
+
             const isFromUser = data.sender !== 'admin';
             const readByAdmin = data.readByAdmin || false;
 
@@ -520,7 +603,14 @@ function loadChatUsers() {
         
         renderUserList();
         updateUnreadBadgeTotal();
+    }, (error) => {
+        console.error("Error loading chat users:", error);
     });
+}
+
+function checkIsOnline(lastMessageTime) {
+    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
+    return lastMessageTime >= tenMinutesAgo;
 }
 
 function renderUserList() {
@@ -534,19 +624,22 @@ function renderUserList() {
         return;
     }
 
-    // Convert map to array and sort by lastTime (most recent first)
     const sortedUsers = Array.from(userMap.entries())
         .filter(([uid, info]) => {
-            // Apply search filter
+            // 1. Search Filter
             if (userSearchTerm && !info.displayName.toLowerCase().includes(userSearchTerm)) {
                 return false;
             }
-            
-            // Apply chat filter
+            // 2. Unread Filter
             if (chatFilter === 'unread' && info.unread === 0) {
                 return false;
             }
-            
+            // 3. NEW: Online Filter!
+            if (chatFilter === 'online') {
+                if (!checkIsOnline(info.lastTime)) {
+                    return false; // Hide them if they aren't online
+                }
+            }
             return true;
         })
         .sort((a, b) => b[1].lastTime - a[1].lastTime);
@@ -556,7 +649,6 @@ function renderUserList() {
         list.appendChild(userDiv);
     });
     
-    // If there's a selected user but it's not in the filtered list, clear selection
     if (selectedUserId && !document.querySelector(`.user-tab[data-userid="${selectedUserId}"]`)) {
         clearSelectedChat();
     }
@@ -601,22 +693,15 @@ function createUserTabElement(uid, info) {
 function selectUserChat(uid, info) {
     selectedUserId = uid;
     
-    // Update active state
     document.querySelectorAll('.user-tab').forEach(t => t.classList.remove('active'));
     const activeTab = document.querySelector(`.user-tab[data-userid="${uid}"]`);
     if (activeTab) activeTab.classList.add('active');
     
-    // Update header
     document.getElementById('selectedCustomerName').textContent = info.displayName;
     document.getElementById('selectedUserAvatar').textContent = info.displayName.charAt(0).toUpperCase();
     
-    // Mark messages as read
     markMessagesAsRead(uid);
-    
-    // Load messages
     loadUserMessages(uid);
-    
-    // Load customer info
     loadCustomerInfo(uid);
 }
 
@@ -666,7 +751,6 @@ function loadUserMessages(uid) {
             container.appendChild(messageEl);
         });
         
-        // Auto-scroll to bottom
         setTimeout(() => {
             container.scrollTo({
                 top: container.scrollHeight,
@@ -674,11 +758,12 @@ function loadUserMessages(uid) {
             });
         }, 100);
         
-        // Mark messages as read
         markMessagesAsRead(uid);
         
-        // Focus input
-        document.getElementById('adminChatInput')?.focus();
+        const chatInput = document.getElementById('adminChatInput');
+        if (chatInput) chatInput.focus();
+    }, (error) => {
+        console.error("Error loading messages:", error);
     });
 }
 
@@ -686,22 +771,88 @@ function createMessageElement(message) {
     const wrapper = document.createElement('div');
     wrapper.className = `message-wrapper ${message.sender === 'admin' ? 'admin' : 'customer'}`;
     
-    const senderLabel = message.sender === 'admin' ? 'You (Admin)' : (message.userEmail || 'Customer');
-    const dateObj = message.timestamp?.toDate ? message.timestamp.toDate() : new Date(message.timestamp);
-    const timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const senderLabel = message.sender === 'admin' ? 'You (Admin)' : (message.userName || message.userEmail || 'Customer');
+    
+    let timeStr = "";
+    if (message.timestamp) {
+        const dateObj = message.timestamp.toDate ? message.timestamp.toDate() : new Date(message.timestamp);
+        timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // --- NEW: RICH ORDER CARD WITH CLICK EVENT ---
+    let orderChipHTML = "";
+    if (message.linkedOrderId) {
+        const shortId = message.linkedOrderId.slice(-8).toUpperCase();
+        // Fallbacks in case the old messages didn't have these new fields yet
+        const imgUrl = message.linkedOrderImg || "assets/logo.png"; 
+        const pName = message.linkedOrderName || "Order #" + shortId;
+        const pStatus = message.linkedOrderStatus || "View Details";
+        
+        // This entire block is now clickable!
+        // It calls a helper function 'openAdminOrderView' which we will define below
+        orderChipHTML = `
+            <div onclick="openAdminOrderView('${message.linkedOrderId}')" 
+                 style="cursor: pointer; background: white; border: 1px solid var(--sand); padding: 8px 10px; border-radius: 8px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; transition: transform 0.2s;">
+                
+                <img src="${imgUrl}" style="width: 45px; height: 45px; object-fit: cover; border-radius: 6px;">
+                
+                <div style="display: flex; flex-direction: column; text-align: left; overflow: hidden;">
+                    <strong style="font-size: 0.85rem; color: var(--walnut); white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">
+                        ${pName}
+                    </strong>
+                    <span style="font-size: 0.75rem; color: var(--primary); font-weight: 600;">
+                        <i class="fas fa-external-link-alt" style="font-size: 0.7rem; margin-right: 3px;"></i> View Order #${shortId}
+                    </span>
+                </div>
+            </div>
+        `;
+    }
     
     wrapper.innerHTML = `
         <div class="message-sender">${senderLabel}</div>
-        <div class="message-bubble">${escapeHtml(message.text)}</div>
+        <div class="message-bubble">
+            ${orderChipHTML}
+            ${escapeHtml(message.text || "")}
+        </div>
         <div class="message-time">${timeStr}</div>
     `;
     
     return wrapper;
 }
 
-// Helper to escape HTML
+// --- NEW HELPER FUNCTION TO OPEN THE ORDER ---
+window.openAdminOrderView = async (orderId) => {
+    // 1. Switch to the Orders tab
+    showAdminSection('orders');
+    
+    // 2. Wait a split second for the orders to load/render
+    setTimeout(() => {
+        // 3. Try to find the order card in the list
+        const orderCard = Array.from(document.querySelectorAll('.order-card-admin')).find(card => {
+            return card.innerText.includes(orderId.slice(-8).toUpperCase());
+        });
+
+        if (orderCard) {
+            // Scroll to it and highlight it flash
+            orderCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            orderCard.style.transition = "box-shadow 0.3s, transform 0.3s";
+            orderCard.style.boxShadow = "0 0 0 4px rgba(231, 76, 60, 0.4)";
+            orderCard.style.transform = "scale(1.02)";
+            
+            // Remove highlight after 2 seconds
+            setTimeout(() => {
+                orderCard.style.boxShadow = "";
+                orderCard.style.transform = "";
+            }, 2000);
+        } else {
+            showToast("Order not found in current list (check filters)", "error");
+        }
+    }, 500);
+};
+
 function escapeHtml(unsafe) {
-    return unsafe
+    if (!unsafe) return "";
+    return unsafe.toString()
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -710,19 +861,28 @@ function escapeHtml(unsafe) {
 }
 
 async function markMessagesAsRead(uid) {
-    const q = query(
-        collection(db, "chats"),
-        where("userId", "==", uid),
-        where("sender", "==", "user"),
-        where("readByAdmin", "==", false)
-    );
-    
-    const snapshot = await getDocs(q);
-    snapshot.forEach(async (docSnap) => {
-        await updateDoc(doc(db, "chats", docSnap.id), {
-            readByAdmin: true
+    try {
+        // We only query by userId so we don't trigger Firebase Index Errors
+        // and so we catch messages that completely lack the 'readByAdmin' field!
+        const q = query(
+            collection(db, "chats"),
+            where("userId", "==", uid)
+        );
+        
+        const snapshot = await getDocs(q);
+        snapshot.forEach(async (docSnap) => {
+            const data = docSnap.data();
+            
+            // Only update messages sent by the user that aren't already marked as read
+            if (data.sender === "user" && data.readByAdmin !== true) {
+                await updateDoc(doc(db, "chats", docSnap.id), {
+                    readByAdmin: true
+                });
+            }
         });
-    });
+    } catch (error) {
+        console.error("Error marking as read:", error);
+    }
 }
 
 window.sendAdminMessage = async () => {
@@ -769,11 +929,9 @@ async function loadCustomerInfo(uid) {
             document.getElementById('infoEmail').textContent = data.email || 'N/A';
             document.getElementById('infoPhone').textContent = data.phone || 'Not set';
             
-            // Count orders for this user
             const ordersSnap = await getDocs(query(collection(db, "orders"), where("userId", "==", uid)));
             document.getElementById('infoOrders').textContent = ordersSnap.size;
             
-            // Load recent orders preview
             loadRecentOrdersPreview(uid);
         } else {
             document.getElementById('infoName').textContent = 'No profile';
@@ -787,38 +945,42 @@ async function loadRecentOrdersPreview(uid) {
     const container = document.getElementById('recentOrdersList');
     if (!container) return;
     
-    const q = query(
-        collection(db, "orders"),
-        where("userId", "==", uid),
-        orderBy("date", "desc"),
-        limit(3)
-    );
-    
-    const snapshot = await getDocs(q);
-    container.innerHTML = "";
-    
-    if (snapshot.empty) {
-        container.innerHTML = '<p style="color: var(--taupe); font-size: 0.9rem;">No orders yet</p>';
-        return;
-    }
-    
-    snapshot.forEach(docSnap => {
-        const order = docSnap.data();
-        container.innerHTML += `
-            <div class="order-preview-item">
-                <img src="${order.imageUrl}" class="order-preview-img" alt="">
-                <div class="order-preview-details">
-                    <div class="order-preview-name">${order.productName}</div>
-                    <div class="order-preview-status">${order.status || 'Pending'}</div>
+    try {
+        const q = query(
+            collection(db, "orders"),
+            where("userId", "==", uid),
+            orderBy("date", "desc"),
+            limit(3)
+        );
+        
+        const snapshot = await getDocs(q);
+        container.innerHTML = "";
+        
+        if (snapshot.empty) {
+            container.innerHTML = '<p style="color: var(--taupe); font-size: 0.9rem;">No orders yet</p>';
+            return;
+        }
+        
+        snapshot.forEach(docSnap => {
+            const order = docSnap.data();
+            container.innerHTML += `
+                <div class="order-preview-item">
+                    <img src="${order.imageUrl}" class="order-preview-img" alt="">
+                    <div class="order-preview-details">
+                        <div class="order-preview-name">${order.productName}</div>
+                        <div class="order-preview-status">${order.status || 'Pending'}</div>
+                    </div>
                 </div>
-            </div>
-        `;
-    });
+            `;
+        });
+    } catch (error) {
+        console.error("Failed to load recent orders preview:", error);
+    }
 }
 
 window.toggleCustomerInfo = () => {
     const panel = document.getElementById('customerInfoPanel');
-    panel.classList.toggle('show');
+    if (panel) panel.classList.toggle('show');
 };
 
 window.refreshChat = () => {
@@ -830,9 +992,7 @@ window.refreshChat = () => {
 
 window.loadFullCustomerHistory = () => {
     if (!selectedUserId) return;
-    // Switch to orders tab and filter for this customer
     showAdminSection('orders');
-    // You could add a filter here to show only this customer's orders
 };
 
 function updateUnreadBadgeTotal() {
@@ -841,7 +1001,6 @@ function updateUnreadBadgeTotal() {
         totalUnread += info.unread;
     });
     
-    // Update browser tab title if there are unread messages
     if (totalUnread > 0) {
         document.title = `(${totalUnread}) Admin Dashboard`;
     } else {

@@ -171,3 +171,27 @@
   border-top-left-radius: 20px;
   border: 1px solid var(--sand);
 }
+
+/* =========================================
+   APPENDED STYLES FOR TIMESTAMPS
+   ========================================= */
+.msg-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.msg-wrapper.user {
+  align-items: flex-end;
+}
+
+.msg-wrapper.admin {
+  align-items: flex-start;
+}
+
+.msg-time {
+  font-size: 0.65rem;
+  color: var(--taupe);
+  margin-top: 2px;
+  padding: 0 8px;
+}

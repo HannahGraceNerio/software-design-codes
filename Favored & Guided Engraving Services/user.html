@@ -40,7 +40,7 @@
                     <i class="fas fa-shopping-bag"></i> My Orders
                 </a>
                 <a href="javascript:void(0)" onclick="showSection('wishlist')" id='nav-wishlist'>
-                    <i class="fas fa-wishlist"></i> Wishlist
+                    <i class="fas fa-heart"></i> Wishlist
                 </a>
                 <a href="javascript:void(0)" onclick="showSection('change-password')">
                     <i class="fas fa-key"></i> Change Password
@@ -99,53 +99,184 @@
     </section>
 
     <section id="account" class="section" style="display:none;">
-        <div style="max-width: 1000px; margin: 0 auto;">
-            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
-                <div class="product-card" style="text-align: left; padding: 30px;">
-                    <h3>Profile</h3>
-                    <p><strong>Name:</strong> <span id="accountFullname"></span></p>
-                    <p><strong>Email:</strong> <span id="accountEmail"></span></p>
-                    <p><strong>Phone:</strong> <span id="accountPhone"></span></p>
-                    <button class="btn-outline" style="width:100%; margin-top:15px;" onclick="showSection('edit-details')">Edit Profile</button>
+        <div class="profile-overview">
+            <div class="profile-header">
+                <div class="profile-avatar" id="profileAvatar">U</div>
+                <div class="profile-title">
+                    <h3>Profile Settings</h3>
+                    <p>Manage your personal information</p>
                 </div>
+            </div>
+            
+            <div class="profile-details">
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Full Name</div>
+                        <div class="detail-value" id="accountFullname">Loading...</div>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Email Address</div>
+                        <div class="detail-value" id="accountEmail">Loading...</div>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Phone Number</div>
+                        <div class="detail-value" id="accountPhone">Not Set</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <button class="btn-primary" onclick="showSection('edit-details')">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </button>
+                <button class="btn-outline" onclick="showSection('change-password')">
+                    <i class="fas fa-key"></i> Change Password
+                </button>
             </div>
         </div>
     </section>
+
+
     <section id="order" class="section" style="display:none;">
-        <div class="order-card">
-            <h3>My order</h3>
+        <div class="section-header">
+            <h2 class="section-title">My Orders</h2>
+            <p class="section-sub">Track and manage your engraved items</p>
         </div>
+        
+        <!-- Order Stats Summary -->
+        <div class="stats-grid" id="order-stats"></div>
+        
+        <!-- Order Filters -->
+        <div class="filter-group" id="order-filters">
+            <button class="filter-btn active" onclick="filterUserOrders('all')">All Orders</button>
+            <button class="filter-btn" onclick="filterUserOrders('pending')">Pending</button>
+            <button class="filter-btn" onclick="filterUserOrders('preparing')">Preparing</button>
+            <button class="filter-btn" onclick="filterUserOrders('ready')">Ready for Pickup</button>
+            <button class="filter-btn" onclick="filterUserOrders('completed')">Completed</button>
+        </div>
+        
+        <!-- Orders Container -->
         <div class="order-grid" id="order-container"></div>
     </section>
 
     <section id="wishlist" class="section" style="display:none;">
-        <div style="text-align: center; margin-bottom: 30px;">
-            <h2>My Wishlist</h2>
-            <p>Items you've hearted for later.</p>
-        </div>
-        <div class="products-grid" id="wishlist-container">
+        <!-- Enhanced Wishlist Header -->
+        <div class="wishlist-header">
+            <div class="wishlist-title-section">
+                <h2>My Wishlist</h2>
+                <p>Items you've hearted for later</p>
             </div>
+            <div class="wishlist-stats">
+                <div class="wishlist-stats-item">
+                    <i class="fas fa-heart"></i>
+                    <span id="wishlist-count">0</span> items
+                </div>
+                <div class="wishlist-stats-item">
+                    <i class="fas fa-tag"></i>
+                    <span id="wishlist-total">₱0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wishlist Actions Bar -->
+        <div class="wishlist-actions">
+            <div class="wishlist-filters">
+                <button class="wishlist-filter-btn active" onclick="filterWishlist('all')">All Items</button>
+                <button class="wishlist-filter-btn" onclick="filterWishlist('in-stock')">In Stock</button>
+                <button class="wishlist-filter-btn" onclick="filterWishlist('low-stock')">Low Stock</button>
+            </div>
+            <div class="wishlist-sort">
+                <label for="wishlist-sort">Sort by:</label>
+                <select id="wishlist-sort" onchange="sortWishlist(this.value)">
+                    <option value="date-desc">Recently Added</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="name-asc">Name: A to Z</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Wishlist Items Grid -->
+        <div class="products-grid" id="wishlist-container"></div>
     </section>
 
+    <!-- Edit Details Section - Redesigned -->
     <section id="edit-details" class="section" style="display:none;">
-        <div class="product-card" style="max-width: 500px; margin: 0 auto; padding: 40px;">
-            <h3>Update Profile</h3>
+        <div class="edit-profile-card">
+            <div class="edit-profile-header">
+                <h3>Edit Profile</h3>
+                <p>Update your personal information</p>
+            </div>
+            
             <form id="editDetailsForm">
-                <input type="text" id="editFullname" placeholder="Full Name" required>
-                <input type="tel" id="editPhone" placeholder="Phone Number" required>
-                <input type="email" id="editEmail" disabled style="opacity: 0.6;">
-                <button class="btn-primary" type="submit" style="width:100%;">Save Changes</button>
+                <div class="edit-form-group">
+                    <label for="editFullname">Full Name</label>
+                    <input type="text" id="editFullname" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="edit-form-group">
+                    <label for="editPhone">Phone Number</label>
+                    <input type="tel" id="editPhone" placeholder="Enter your phone number" required>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 16px; margin-top: 10px;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
             </form>
         </div>
     </section>
 
+    <!-- Change Password Section - Redesigned -->
     <section id="change-password" class="section" style="display:none;">
-        <div class="product-card" style="max-width: 500px; margin: 0 auto; padding: 40px;">
-            <h3>Change Password</h3>
+        <div class="change-password-card">
+            <div class="password-header">
+                <h3>Change Password</h3>
+                <p>Choose a strong password to keep your account secure</p>
+            </div>
+            
             <form id="changePasswordForm">
-                <input type="password" id="newPassword" placeholder="New Password" required>
-                <input type="password" id="confirmNewPassword" placeholder="Confirm Password" required>
-                <button class="btn-primary" type="submit" style="width:100%;">Update Password</button>
+                <div class="password-form-group">
+                    <label for="newPassword">New Password</label>
+                    <div class="password-wrapper-modern">
+                        <input type="password" id="newPassword" placeholder="Enter new password" required minlength="8">
+                        <i class="far fa-eye toggle-password-modern" onclick="togglePasswordModern('newPassword', this)"></i>
+                    </div>
+                    <div class="password-hint" id="newPasswordHint">
+                        <i class="fas fa-info-circle"></i>
+                        Minimum 8 characters
+                    </div>
+                </div>
+                
+                <div class="password-form-group">
+                    <label for="confirmNewPassword">Confirm Password</label>
+                    <div class="password-wrapper-modern">
+                        <input type="password" id="confirmNewPassword" placeholder="Confirm new password" required minlength="8">
+                        <i class="far fa-eye toggle-password-modern" onclick="togglePasswordModern('confirmNewPassword', this)"></i>
+                    </div>
+                    <div class="password-hint" id="confirmPasswordHint">
+                        <i class="fas fa-info-circle"></i>
+                        Passwords must match
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 16px; margin-top: 10px;">
+                    <i class="fas fa-lock"></i> Update Password
+                </button>
             </form>
         </div>
     </section>
@@ -209,6 +340,7 @@
                 <h2 id="detailName"></h2>
                 <p id="detailDesc"></p>
                 <p class="price" id="detailPrice"></p>
+                <p id="detailStock" style="font-size: 0.9rem; margin-bottom: 15px; font-weight: 600;"></p>
                 <textarea id="engravingText" placeholder="Personalization details..."></textarea>
                 <input type="number" id="orderQty" value="1" min="1">
                 <button class="btn-primary" onclick="placeOrder()">Place Order</button>
@@ -217,6 +349,87 @@
     </div>
 </div>
 
+<div class="modal" id="orderSuccessModal">
+    <div class="modal-box success-modal-box">
+        <div class="success-icon-wrapper">
+            <i class="fas fa-check"></i>
+        </div>
+        <h2 class="success-title">Order Placed!</h2>
+        <p class="success-message">
+            Thank you for your purchase. Your faith-inspired engraving is now being processed. You can track its status in your order history.
+        </p>
+        <div class="success-actions">
+            <button class="btn-primary w-100" onclick="goToOrders()">
+                <i class="fas fa-shopping-bag icon-left"></i> View My Orders
+            </button>
+            <button class="btn-outline w-100" onclick="closeModal('orderSuccessModal'); showSection('products');">
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="cancelOrderModal">
+    <div class="modal-box cancel-modal-box">
+        <button class="modal-close" onclick="closeModal('cancelOrderModal')">&times;</button>
+        <h3 class="cancel-modal-title">Cancel Order</h3>
+        <p class="cancel-modal-text">Please tell us why you are cancelling this order. This action cannot be undone.</p>
+        
+        <div class="cancel-form-group">
+            <label for="cancelReason" class="cancel-label">Reason for Cancellation *</label>
+            <select id="cancelReason" class="cancel-select">
+                <option value="" disabled selected>Select a reason...</option>
+                <option value="Changed my mind">I changed my mind</option>
+                <option value="Ordered by mistake">I ordered by mistake</option>
+                <option value="Found a better price elsewhere">Found a better price elsewhere</option>
+                <option value="Shipping time is too long">Shipping time is too long</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <input type="hidden" id="cancelOrderIdToSubmit">
+
+        <div class="cancel-actions">
+            <button class="btn-outline" onclick="closeModal('cancelOrderModal')">Keep Order</button>
+            <button class="btn-primary btn-danger" onclick="submitCancellation()" id="confirmCancelBtn">
+                Confirm Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="passwordSuccessModal">
+    <div class="modal-box success-modal-box">
+        <div class="success-icon-wrapper">
+            <i class="fas fa-lock"></i> </div>
+        <h2 class="success-title">Password Updated!</h2>
+        <p class="success-message">
+            Your account password has been successfully changed. Please use your new password the next time you log in.
+        </p>
+        <div class="success-actions">
+            <button class="btn-primary w-100" onclick="closeModal('passwordSuccessModal'); showSection('account');">
+                Back to My Account
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="updateSuccessModal">
+    <div class="modal-box success-modal-box">
+        <div class="success-icon-wrapper" style="background: #d1e7dd; color: #0f5132;">
+            <i class="fas fa-user-check"></i>
+        </div>
+        <h2 class="success-title">Update Complete!</h2>
+        <p class="success-message">
+            Your account details have been successfully updated. Your profile now reflects your latest information.
+        </p>
+        <div class="success-actions">
+            <button class="btn-primary w-100" onclick="closeModal('updateSuccessModal'); showSection('account');">
+                Back to My Account
+            </button>
+        </div>
+    </div>
+</div>
 
 <script type="module" src="firebase-config.js"></script>
 <script type="module" src="user.js?v=101"></script>

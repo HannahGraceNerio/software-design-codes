@@ -1,3 +1,4 @@
+
 /* =========================================
    RESPONSIVE.CSS - All Mobile/Tablet Overrides
    ========================================= */
@@ -605,4 +606,133 @@ html {
   html {
     font-size: 12px;
   }
+}
+
+
+/* Large Screen Fixes for Order Cards (1024px and above) */
+@media (min-width: 1024px) {
+    .order-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 30px !important;
+    }
+    
+    .order-card-enhanced {
+        max-width: 100%;
+    }
+    
+    .order-header-top {
+        flex-wrap: nowrap;
+    }
+    
+    .order-status {
+        font-size: 0.9rem;
+        padding: 6px 16px;
+    }
+    
+    .order-product {
+        flex-wrap: nowrap;
+    }
+    
+    .tracker-steps {
+        gap: 15px;
+    }
+    
+    .step-label {
+        font-size: 0.95rem;
+    }
+    
+    .step-desc {
+        font-size: 0.75rem;
+    }
+}
+
+/* Extra Large Screens (1400px and above) */
+@media (min-width: 1400px) {
+    .order-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 35px !important;
+    }
+    
+    .order-header {
+        padding: 25px 30px;
+    }
+    
+    .order-body {
+        padding: 30px;
+    }
+    
+    .order-number {
+        font-size: 1.2rem;
+    }
+    
+    .order-status {
+        font-size: 1rem;
+        padding: 8px 20px;
+    }
+    
+    .order-total {
+        font-size: 1.4rem;
+    }
+    
+    .order-product-img {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .order-product-name {
+        font-size: 1.3rem;
+    }
+}
+/* Wishlist Responsive Enhancements */
+@media (max-width: 768px) {
+    #wishlist .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px !important;
+    }
+    
+    .wishlist-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 15px !important;
+    }
+    
+    .wishlist-stats {
+        width: 100% !important;
+        justify-content: space-around !important;
+    }
+    
+    .wishlist-actions {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    .wishlist-filters {
+        justify-content: center !important;
+    }
+    
+    .wishlist-sort {
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #wishlist .products-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .wishlist-stats {
+        flex-wrap: wrap !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-card {
+        max-width: 90% !important;
+        padding: 25px !important;
+    }
+    
+    #signupSection [style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
 }

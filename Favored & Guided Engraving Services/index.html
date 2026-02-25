@@ -74,16 +74,130 @@
     </section>
 
     <section id="about" class="section" style="display:none;">
-        <div style="text-align: center;">
-            <h2 class="section-title">About Us</h2>
-            <p>Guided by faith and crafted with love.</p>
+        <div class="about-section">
+            <!-- Mission Statement Card -->
+            <div class="mission-card">
+                <div class="mission-icon">
+                    <i class="fas fa-feather-alt"></i>
+                </div>
+                <h2>Crafted with Faith, Made with Love</h2>
+                <p>Every piece we create carries a message of hope, faith, and inspiration. Our mission is to provide beautifully handcrafted wooden engravings that serve as daily reminders of God's love and guidance in your life.</p>
+            </div>
+
+            <!-- Three Column Grid -->
+            <div class="about-grid">
+                <!-- Contact Info Card -->
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Contact Info</h3>
+                    
+                    <div class="contact-detail">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-label">Email</div>
+                            <div class="contact-value">info@favoredguide.com</div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-detail">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-label">Phone</div>
+                            <div class="contact-value">(555) 123-4567</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Socials Card -->
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3>Connect With Us</h3>
+                    
+                    <div class="contact-detail">
+                        <div class="contact-icon">
+                            <i class="fab fa-facebook-f"></i>
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-label">Facebook</div>
+                            <div class="contact-value">/favoredandguided</div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-detail">
+                        <div class="contact-icon">
+                            <i class="fab fa-instagram"></i>
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-label">Instagram</div>
+                            <div class="contact-value">@favoredandguided</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Open Hours Card -->
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Open Hours</h3>
+                    
+                    <div class="hours-list">
+                        <div class="hours-item">
+                            <span class="hours-day">Monday - Friday</span>
+                            <span class="hours-time">9:00 AM - 6:00 PM</span>
+                        </div>
+                        
+                        <div class="hours-item">
+                            <span class="hours-day">Saturday</span>
+                            <span class="hours-time">10:00 AM - 4:00 PM</span>
+                        </div>
+                        
+                        <div class="hours-item">
+                            <span class="hours-day">Sunday</span>
+                            <span class="hours-time">Closed</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Story Section -->
+            <div class="story-section">
+                <div class="story-content">
+                    <div class="story-text">
+                        <h3>Our Story</h3>
+                        <p>Favored & Guided was born from a simple desire to share faith through art. What started as a small passion project creating personalized engravings for our local church community has grown into a ministry of craftsmanship.</p>
+                        <p>Each piece is thoughtfully designed and handcrafted with premium Philippine mahogany, ensuring that every engraving carries not just a message, but a piece of our heart and dedication to quality.</p>
+                        
+                        <div class="story-signature">
+                            <p>"For we are God's handiwork, created in Christ Jesus to do good works."</p>
+                            <span>— Ephesians 2:10</span>
+                        </div>
+                    </div>
+                    
+                    <div class="story-image">
+                        <img src="assets/hero-engraving.png" alt="Our Workshop">
+                        <div class="story-image-caption">
+                            <i class="fas fa-hammer" style="margin-right: 6px;"></i>
+                            Handcrafted with care
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 </main>
 
 <div class="modal" id="authModal">
-    <div class="modal-box auth-card">
-        <button class="modal-close" onclick="closeModal('authModal')">&times;</button>
+    <div class="modal-box auth-card" style="max-width: 550px; padding: 40px; max-height: 90vh; overflow-y: auto;">
+        <button class="modal-close" onclick="closeModal('authModal')" style="position: sticky; top: 0; float: right;">&times;</button>
         
         <div id="loginSection">
             <h2 class="auth-title">Log In</h2>
@@ -91,7 +205,7 @@
                 <button class="social-btn" onclick="loginWithGoogle()">
                     <i class="fab fa-google"></i> Continue with Google
                 </button>
-                <button class="social-btn" onclick="signinWithFacebook()">
+                <button class="social-btn" onclick="loginWithFacebook()">
                     <i class="fab fa-facebook" style="color: #1877F2;"></i> Continue with Facebook
                 </button>
             </div>
@@ -104,9 +218,9 @@
             </div>
             <div class="input-group">
                 <label>Password</label>
-                <div class="password-wrapper">
-                    <input type="password" id="loginPassword" placeholder="Enter your password" />
-                    <i class="far fa-eye toggle-password"></i>
+                <div class="password-wrapper" style="position: relative;">
+                    <input type="password" id="loginPassword" placeholder="Enter your password" style="padding-right: 40px;" />
+                    <i class="far fa-eye toggle-password" onclick="togglePasswordVisibility('loginPassword', this)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--taupe); z-index: 10;"></i>
                 </div>
                 <a href="#" class="forgot-pass">Forgot password?</a>
             </div>
@@ -130,41 +244,68 @@
             
             <div class="divider">or</div>
             
-            <!-- Sign Up Form - Now in a 2-column grid layout -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                <div class="input-group" style="grid-column: 1 / -1;">
+            <!-- Sign Up Form - Improved Layout -->
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+                <div class="input-group">
                     <label>Full Name</label>
                     <input type="text" id="signupName" placeholder="Enter your full name" />
                 </div>
                 
-                <div class="input-group" style="grid-column: 1 / -1;">
+                <div class="input-group">
                     <label>Email</label>
                     <input type="email" id="signupEmail" placeholder="Enter your email" />
                 </div>
                 
-                <div class="input-group">
-                    <label>Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="signupPassword" placeholder="Create a password" />
-                        <i class="far fa-eye toggle-password"></i>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="input-group">
+                        <label>Password</label>
+                        <div class="password-wrapper" style="position: relative;">
+                            <input type="password" id="signupPassword" placeholder="Create a password" style="padding-right: 40px;" />
+                            <i class="far fa-eye toggle-password" onclick="togglePasswordVisibility('signupPassword', this)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--taupe); z-index: 10;"></i>
+                        </div>
+                        <small class="input-hint">Min. 8 characters</small>
                     </div>
-                    <small class="input-hint">Min. 8 characters</small>
+                    
+                    <div class="input-group">
+                        <label>Confirm Password</label>
+                        <div class="password-wrapper" style="position: relative;">
+                            <input type="password" id="confirmPassword" placeholder="Confirm password" style="padding-right: 40px;" />
+                            <i class="far fa-eye toggle-password" onclick="togglePasswordVisibility('confirmPassword', this)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--taupe); z-index: 10;"></i>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="input-group">
-                    <label>Confirm Password</label>
-                    <div class="password-wrapper">
-                        <input type="password" id="confirmPassword" placeholder="Confirm password" />
-                        <i class="far fa-eye toggle-password"></i>
-                    </div>
+                <div style="display: flex; align-items: flex-start; gap: 10px; margin: 15px 0 5px; text-align: left; background: var(--cream); padding: 15px; border-radius: 12px; border: 1px solid var(--sand);">
+                    <input type="checkbox" id="dpaConsent" required style="margin-top: 3px; cursor: pointer; width: 18px; height: 18px; accent-color: var(--primary); flex-shrink: 0;">
+                    <label for="dpaConsent" style="font-size: 0.85rem; color: var(--text-body); line-height: 1.5; cursor: pointer;">
+                        I agree to the collection and processing of my personal data in accordance with the Data Privacy Act of 2012. Read our <a href="javascript:void(0)" onclick="openModal('privacyModal')" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Privacy Policy</a>.
+                    </label>
                 </div>
             </div>
             
-            <button class="btn-auth-submit" onclick="signupUser()" style="margin-top: 20px;">Create Account</button>
+            <button class="btn-auth-submit" onclick="signupUser()" style="margin-top: 25px; padding: 16px;">Create Account</button>
             <p class="auth-switch">Already have an account? <span onclick="toggleAuth('login')">Log In</span></p>
         </div>
     </div>
 </div>
+
+<div class="modal" id="verifyEmailModal">
+    <div class="modal-box success-modal-box">
+        <div class="success-icon-wrapper" style="background: #e2e8f0; color: #3b82f6;">
+            <i class="fas fa-envelope-open-text"></i>
+        </div>
+        <h2 class="success-title">Check Your Email</h2>
+        <p class="success-message">
+            We've sent a verification link to your email address. Please click the link to activate your account before logging in.
+        </p>
+        <div class="success-actions">
+            <button class="btn-primary w-100" onclick="closeModal('verifyEmailModal'); openModal('authModal'); toggleAuth('login');">
+                Back to Login
+            </button>
+        </div>
+    </div>
+</div>
+
 
 <div id="chat-container" class="chat-container">
     <div class="chat-header" onclick="toggleChat()">
@@ -177,6 +318,42 @@
             <input type="text" id="chatInput" placeholder="Type a message...">
             <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
+    </div>
+</div>
+
+<div class="modal" id="privacyModal">
+    <div class="modal-box" style="max-width: 600px; text-align: left; padding: 30px;">
+        <button class="modal-close" onclick="closeModal('privacyModal')">&times;</button>
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <i class="fas fa-shield-alt" style="font-size: 30px; color: var(--primary); margin-bottom: 10px;"></i>
+            <h3 style="color: var(--walnut);">Privacy Policy</h3>
+        </div>
+        
+        <div style="max-height: 400px; overflow-y: auto; padding-right: 15px; color: var(--text-body); font-size: 0.9rem; line-height: 1.6;">
+            <p><strong>1. Introduction</strong><br>
+            Welcome to Favored & Guided Engraving. We respect your privacy and are committed to protecting your personal data in compliance with the Philippine Data Privacy Act of 2012 (Republic Act No. 10173).</p>
+            
+            <p style="margin-top: 15px;"><strong>2. Information We Collect</strong><br>
+            We collect information you provide directly to us when you create an account, place an order, or contact support. This includes your Name, Email Address, Phone Number, and Order/Personalization details.</p>
+            
+            <p style="margin-top: 15px;"><strong>3. How We Use Your Information</strong><br>
+            Your personal data is strictly used for:<br>
+            &bull; Processing and fulfilling your custom engraving orders.<br>
+            &bull; Communicating with you regarding your order status.<br>
+            &bull; Providing customer support and responding to inquiries.<br>
+            &bull; Securing your account details.</p>
+            
+            <p style="margin-top: 15px;"><strong>4. Data Protection & Sharing</strong><br>
+            We implement standard security measures to protect your data. We do not sell, trade, or rent your personal identification information.</p>
+            
+            <p style="margin-top: 15px;"><strong>5. Your Rights</strong><br>
+            Under the Data Privacy Act, you have the right to be informed, access, rectify, or request deletion of your personal data. If you wish to update your data or delete your account entirely, please contact us through the chat widget.</p>
+        </div>
+        
+        <button class="btn-primary" style="width: 100%; margin-top: 20px;" onclick="closeModal('privacyModal')">
+            I Understand
+        </button>
     </div>
 </div>
 

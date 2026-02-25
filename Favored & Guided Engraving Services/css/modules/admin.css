@@ -14,8 +14,6 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 25px;
     margin-bottom: 40px;
-    background: var(--cream);
-    padding: 20px 0;
     transition: all 0.3s ease;
 }
 
@@ -232,6 +230,8 @@
     flex-direction: column;
     height: 100%;
     background: white;
+    min-height: 0; 
+    overflow: hidden; 
 }
 
 .chat-header-area {
@@ -241,12 +241,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    min-height: 90px;
 }
 
 .selected-user-info {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
+    flex-wrap: nowrap;
+    min-width: 0;
 }
 
 .selected-user-avatar {
@@ -260,12 +263,22 @@
     color: white;
     font-weight: 600;
     font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+.selected-user-details {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    min-width: 0;
 }
 
 .selected-user-details h4 {
     font-size: 1.2rem;
     color: var(--walnut);
-    margin-bottom: 4px;
+    margin: 0;
+    white-space: nowrap;
 }
 
 .selected-user-details .user-status {
@@ -274,6 +287,7 @@
     display: flex;
     align-items: center;
     gap: 5px;
+    white-space: nowrap;
 }
 
 .status-dot {
@@ -287,6 +301,7 @@
 .chat-actions {
     display: flex;
     gap: 10px;
+    flex-shrink: 0;
 }
 
 .btn-icon {
@@ -309,6 +324,34 @@
     border-color: var(--primary);
 }
 
+/* Responsive Chat Header */
+@media (max-width: 1100px) {
+    .selected-user-details {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .selected-user-details h4 {
+        font-size: 1.1rem;
+    }
+    
+    .selected-user-details .user-status {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .chat-header-area {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .chat-actions {
+        align-self: flex-end;
+    }
+}
 /* Messages Area */
 .chat-messages-area {
     flex: 1;
@@ -324,6 +367,7 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-height: 0;
 }
 
 .message-wrapper {
@@ -356,6 +400,7 @@
     font-size: 0.95rem;
     line-height: 1.5;
     word-wrap: break-word;
+    word-break: break-word;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     position: relative;
 }

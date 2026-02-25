@@ -2,7 +2,8 @@
 import { auth, db } from "./firebase-config.js";
 import { 
     createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword, 
+    signInWithEmailAndPassword,
+    sendEmailVerification, 
     signOut,
     getAuth,
     onAuthStateChanged,
@@ -178,6 +179,18 @@ window.toggleAuth = (type) => {
     }
 };
 
+window.togglePasswordVisibility = (inputId, iconElement) => {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+        input.type = 'text';
+        iconElement.classList.remove('fa-eye');
+        iconElement.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        iconElement.classList.remove('fa-eye-slash');
+        iconElement.classList.add('fa-eye');
+    }
+};
 // --- SOCIAL AUTHENTICATION ---
 
 window.signInWithGoogle = async () => {
@@ -216,31 +229,89 @@ async function saveSocialUser(user) {
 window.loginUser = async () => {
     const email = document.getElementById('loginEmail').value;
     const pass = document.getElementById('loginPassword').value;
+    const loginBtn = document.querySelector('#loginSection .btn-auth-submit');
+    const originalText = loginBtn.innerHTML;
+
     try {
-        await signInWithEmailAndPassword(auth, email, pass);
-        window.location.href = (email === "admin@favored.com") ? "/admin" : "/user"; // [cite: 14]
-    } catch (error) { showToast(error.message, 'error'); }
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+        loginBtn.disabled = true;
+
+        const result = await signInWithEmailAndPassword(auth, email, pass);
+        const user = result.user;
+
+        // CHECK IF EMAIL IS VERIFIED (BUT SKIP THIS CHECK FOR THE ADMIN)
+        if (!user.emailVerified && email !== "admin@favored.com") {
+            await signOut(auth); // Sign them back out
+            window.closeModal('authModal'); // Close login box
+            return;
+        }
+
+        // If verified (or if it's the admin account), proceed!
+        window.location.href = (email === "admin@favored.com") ? "/admin" : "/user"; 
+        
+    } catch (error) { 
+        showToast("Login failed: " + error.message, 'error'); 
+    } finally {
+        if (loginBtn) {
+            loginBtn.innerHTML = originalText;
+            loginBtn.disabled = false;
+        }
+    }
 };
 
 window.signupUser = async () => {
     const name = document.getElementById('signupName').value;
     const email = document.getElementById('signupEmail').value;
     const pass = document.getElementById('signupPassword').value;
-    const confirm = document.getElementById('confirmPassword').value; // Dual Password confirmation
+    const confirm = document.getElementById('confirmPassword').value; 
+    const signupBtn = document.querySelector('#signupSection .btn-auth-submit');
+    const originalText = signupBtn.innerHTML;
 
+    // Validation
     if (pass !== confirm) {
-        showToast("Passwords do not match!", 'error');
+        return showToast("Passwords do not match!", 'error');
+    }
+    if (pass.length < 8) {
+        return showToast("Password must be at least 8 characters.", 'error');
     }
 
     try {
+        signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+        signupBtn.disabled = true;
+
+        // 1. Create Account
         const result = await createUserWithEmailAndPassword(auth, email, pass);
+        
+        // 2. Save Data to Firestore
         await setDoc(doc(db, "users", result.user.uid), {
             name: name,
             email: email,
-            role: "customer"
+            role: "customer",
+            dpaConsent: true,
+            createdAt: new Date().toISOString()
         });
-        window.location.href = "/user";
-    } catch (error) { showToast(error.message, 'error'); }
+
+        // 3. Send Verification Email
+        await sendEmailVerification(result.user);
+
+        // 4. Force Sign Out
+        await signOut(auth);
+
+        // 5. Update UI
+        document.getElementById('signupName').value = '';
+        document.getElementById('signupEmail').value = '';
+        document.getElementById('signupPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+        
+        window.closeModal('authModal');
+        window.openModal('verifyEmailModal'); // Show the success modal!
+        
+    } catch (error) { 
+        showToast("Signup failed: " + error.message, 'error'); 
+    } finally {
+        signupBtn.innerHTML = originalText;
+        signupBtn.disabled = false;
+    }
 };
 
 // --- PRODUCT RENDERING ---
@@ -323,3 +394,53 @@ window.sendMessage = async () => {
 };
 
 document.addEventListener("DOMContentLoaded", renderProducts);
+
+// ==========================================
+// ADMIN NAVIGATION & CHAT INITIALIZATION
+// ==========================================
+
+// This variable ensures we only load the chat listeners once to prevent duplicate data
+let isChatLoaded = false; 
+
+window.showAdminSection = (sectionId) => {
+    // 1. Hide all sections
+    ['products', 'orders', 'admin-chat'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    // 2. Show the clicked section
+    const target = document.getElementById(sectionId);
+    if (target) target.style.display = 'block';
+
+    // 3. Update the Navigation Bar styling
+    document.querySelectorAll('.nav-center a').forEach(a => {
+        a.classList.remove('active');
+        a.style.color = 'rgba(255,255,255,0.8)';
+    });
+    
+    const activeNav = document.getElementById('nav-' + sectionId);
+    if (activeNav) {
+        activeNav.classList.add('active');
+        activeNav.style.color = 'white';
+    }
+
+    // 4. CRITICAL FIX: Load the chat users ONLY when the admin opens the chat tab!
+    if (sectionId === 'admin-chat' && !isChatLoaded) {
+        console.log("Initializing Chat System...");
+        if (typeof loadChatUsers === "function") {
+            loadChatUsers(); 
+            isChatLoaded = true; // Mark as loaded so we don't duplicate listeners
+        } else {
+            console.error("loadChatUsers function is missing!");
+        }
+    }
+};
+
+window.focusChatInput = () => {
+    const input = document.getElementById('adminChatInput');
+    if (input) {
+        input.disabled = false;
+        input.focus();
+    }
+};
