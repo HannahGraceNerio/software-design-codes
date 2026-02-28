@@ -38,12 +38,16 @@
   animation: fadeIn 0.2s;
 }
 
+.dropdown-content.show {
+  display: block !important;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.user-menu-dropdown:hover .dropdown-content {
+.user-menu-dropdown.active .dropdown-content {
   display: block;
 }
 
@@ -535,7 +539,54 @@
     flex: 1;
     min-width: 120px;
 }
+/* Order Actions Container - for Support and View Design buttons */
+.order-actions-container {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    width: 100%;
+}
 
+.order-actions-container .btn-primary,
+.order-actions-container .btn-outline {
+    flex: 1;
+    padding: 12px;
+    min-width: 120px;
+}
+
+/* Cancel Order Container - full width below */
+.order-cancel-container {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed var(--sand);
+    width: 100%;
+}
+
+.order-cancel-container .btn-cancel-order {
+    width: 100%;
+    padding: 12px;
+    color: #e74c3c;
+    border-color: #f5b7b1;
+    transition: all 0.2s ease;
+}
+
+.order-cancel-container .btn-cancel-order:hover {
+    background: #ffebee;
+    border-color: #e74c3c;
+    color: #e74c3c;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .order-actions-container {
+        flex-direction: column;
+    }
+    
+    .order-actions-container .btn-primary,
+    .order-actions-container .btn-outline {
+        width: 100%;
+    }
+}
 /* Rejected State */
 .order-rejected {
     background: #fee;
@@ -1566,73 +1617,6 @@
     color: var(--walnut);
 }
 
-.password-wrapper-modern {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-
-
-.password-wrapper-modern input {
-    width: 100%;
-    padding: 14px 45px 14px 18px; /* Right padding to make room for icon */
-    border: 2px solid var(--sand);
-    border-radius: 20px;
-    font-size: 1rem;
-    transition: all 0.2s ease;
-    background: white;
-    line-height: normal; /* Ensure consistent line height */
-    height: 48px; 
-}
-
-.password-wrapper-modern input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(192, 107, 69, 0.1);
-}
-
-.toggle-password-modern {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    
-    height: 100%;
-    display: flex;
-    align-items: center;
-
-    cursor: pointer;
-    color: var(--taupe);
-    font-size: 1.1rem;
-}
-.password-wrapper-modern .toggle-password-modern {
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--taupe);
-    cursor: pointer;
-    font-size: 1.2rem;
-    transition: color 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%; 
-    z-index: 10;
-    background: transparent;
-    line-height: 1; 
-    pointer-events: auto; 
-    border: none;
-    outline: none;
-}
-
-.password-wrapper-modern .toggle-password-modern:hover {
-    color: var(--primary);
-}
-
 .password-hint {
     font-size: 0.8rem;
     color: var(--taupe);
@@ -1653,6 +1637,7 @@
 .password-hint.invalid {
     color: #c62828;
 }
+
 
 /* Update for existing sections */
 #account .product-card,
@@ -1962,82 +1947,6 @@
     font-weight: 500;
 }
 
-/* Story Section */
-.story-section {
-    margin-top: 60px;
-    padding: 40px;
-    background: linear-gradient(135deg, var(--cream), white);
-    border-radius: var(--border-radius-lg);
-    border: 1px solid var(--sand);
-    box-shadow: var(--shadow-soft);
-    animation: fadeInUp 0.8s ease;
-    animation-delay: 0.4s;
-    animation-fill-mode: both;
-}
-
-.story-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    align-items: center;
-}
-
-.story-text h3 {
-    font-family: var(--font-serif);
-    font-size: 2rem;
-    color: var(--walnut);
-    margin-bottom: 20px;
-}
-
-.story-text p {
-    color: var(--text-body);
-    line-height: 1.8;
-    margin-bottom: 20px;
-}
-
-.story-signature {
-    margin-top: 30px;
-    padding-top: 20px;
-    border-top: 2px dashed var(--sand);
-}
-
-.story-signature p {
-    font-family: var(--font-serif);
-    font-size: 1.2rem;
-    color: var(--primary);
-    margin-bottom: 5px;
-}
-
-.story-signature span {
-    color: var(--taupe);
-    font-size: 0.9rem;
-}
-
-.story-image {
-    position: relative;
-}
-
-.story-image img {
-    width: 100%;
-    border-radius: 20px;
-    box-shadow: var(--shadow-hover);
-    border: 1px solid var(--sand);
-}
-
-.story-image-caption {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    background: rgba(255, 255, 255, 0.95);
-    padding: 10px 20px;
-    border-radius: 30px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--walnut);
-    border: 1px solid var(--sand);
-    backdrop-filter: blur(5px);
-}
-
 /* Animations */
 @keyframes fadeInUp {
     from {
@@ -2055,10 +1964,6 @@
     .about-grid {
         gap: 20px;
     }
-    
-    .story-content {
-        gap: 30px;
-    }
 }
 
 @media (max-width: 768px) {
@@ -2073,19 +1978,6 @@
     
     .mission-card h2 {
         font-size: 2rem;
-    }
-    
-    .story-content {
-        grid-template-columns: 1fr;
-    }
-    
-    .story-image {
-        order: -1;
-    }
-    
-    .story-image img {
-        max-height: 300px;
-        object-fit: cover;
     }
 }
 

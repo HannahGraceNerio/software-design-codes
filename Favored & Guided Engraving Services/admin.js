@@ -133,6 +133,15 @@ async function loadInventory() {
     const template = document.getElementById('product-template');
     if(!container || !template) return;
     
+    // Show skeleton loading for admin product list
+    container.innerHTML = Array(4).fill(0).map(() => `
+        <div class="product-card">
+            <div class="skeleton-loader skeleton-product"></div>
+            <div class="skeleton-loader skeleton-text"></div>
+            <div class="skeleton-loader skeleton-text short"></div>
+        </div>
+    `).join('');
+    
     onSnapshot(collection(db, "products"), (snapshot) => {
         container.innerHTML = "";
         snapshot.forEach(docSnap => {
@@ -367,6 +376,21 @@ window.loadOrders = () => {
     const container = document.getElementById('admin-orders-container');
     const template = document.getElementById('order-template');
     if(!container || !template) return;
+    
+    // Show skeleton loading for admin orders
+    container.innerHTML = Array(3).fill(0).map(() => `
+        <div class="order-card-admin">
+            <div class="skeleton-loader" style="height: 20px; width: 30%; margin-bottom: 15px;"></div>
+            <div style="display: flex; gap: 15px;">
+                <div class="skeleton-loader" style="width: 80px; height: 80px; border-radius: 15px;"></div>
+                <div style="flex: 1;">
+                    <div class="skeleton-loader skeleton-text"></div>
+                    <div class="skeleton-loader skeleton-text" style="width: 60%;"></div>
+                    <div class="skeleton-loader skeleton-text" style="width: 40%;"></div>
+                </div>
+            </div>
+        </div>
+    `).join('');
 
     onSnapshot(query(collection(db, "orders"), orderBy("date", "desc")), (snapshot) => {
         container.innerHTML = "";
@@ -390,6 +414,94 @@ window.loadOrders = () => {
             clone.querySelector('.order-total').textContent = `₱${o.totalPrice?.toLocaleString() || '0'}`;
             clone.querySelector('.order-note').textContent = `Note: ${o.personalization || "None"}`;
 
+const designBtn = clone.querySelector('.view-design-btn');
+            
+            // 1. UPDATED CONDITION: Check for new 'elements' array OR old 'posX'
+            if (((o.elements && o.elements.length > 0) || o.posX !== undefined) && designBtn) {
+                designBtn.style.display = 'block'; // Show the button
+            
+                designBtn.onclick = () => {
+                    // Set the background image
+                    document.getElementById('adminPreviewImg').src = o.imageUrl;
+                    
+                    // Find the Admin Canvas container
+                    const wrapper = document.getElementById('adminCanvas');
+                    if(!wrapper) {
+                        console.error("Could not find adminCanvas in HTML!");
+                        return;
+                    }
+                    
+                    // Clear out any old text/designs from the previous order you viewed
+                    Array.from(wrapper.children).forEach(child => {
+                        if (child.tagName !== 'IMG') child.remove();
+                    });
+
+                    // --- 2A. RENDER NEW MULTI-ITEM CANVAS DESIGNS ---
+                    if (o.elements && Array.isArray(o.elements)) {
+                        o.elements.forEach(item => {
+                            const div = document.createElement('div');
+                            div.innerText = item.content;
+                            div.style.position = 'absolute';
+                            div.style.top = '50%';
+                            div.style.left = '50%';
+                            div.style.color = '#2c1a0e';
+                            div.style.mixBlendMode = 'multiply';
+                            div.style.textAlign = 'center';
+                            div.style.whiteSpace = 'pre-wrap';
+                            div.style.lineHeight = item.type === 'text' ? '1.2' : '1';
+                            div.style.pointerEvents = 'none';
+                            
+                            div.style.fontSize = item.size + "px";
+                            div.style.transform = `translate(calc(-50% + ${item.x}px), calc(-50% + ${item.y}px)) rotate(${item.rotation}deg)`;
+                            
+                            if(item.font && item.font.toLowerCase() !== "arial") {
+                                div.style.fontFamily = `"${item.font}", sans-serif`;
+                                let linkId = 'admin-font-' + item.font.replace(/\s+/g, '');
+                                if(!document.getElementById(linkId)) {
+                                    let link = document.createElement('link'); link.id = linkId; link.rel = 'stylesheet';
+                                    link.href = `https://fonts.googleapis.com/css2?family=${item.font.replace(/\s+/g, '+')}&display=swap`;
+                                    document.head.appendChild(link);
+                                }
+                            } else {
+                                div.style.fontFamily = "Arial, sans-serif";
+                            }
+                            wrapper.appendChild(div);
+                        });
+                    } 
+                    // --- 2B. FALLBACK FOR OLD SINGLE-TEXT DESIGNS ---
+                    else if (o.posX !== undefined) {
+                        const div = document.createElement('div');
+                        div.innerText = o.personalization || o.engravingText || "No text";
+                        div.style.position = 'absolute';
+                        div.style.top = '50%';
+                        div.style.left = '50%';
+                        div.style.color = '#2c1a0e';
+                        div.style.mixBlendMode = 'multiply';
+                        div.style.textAlign = 'center';
+                        div.style.whiteSpace = 'pre-wrap';
+                        div.style.pointerEvents = 'none';
+
+                        const rot = o.engravingRotation || 0;
+                        div.style.fontSize = (o.engravingSize || 30) + "px";
+                        div.style.transform = `translate(calc(-50% + ${o.posX}px), calc(-50% + ${o.posY}px)) rotate(${rot}deg)`;
+                        
+                        const font = o.engravingFont || "Arial";
+                        div.style.fontFamily = `"${font}", sans-serif`;
+
+                        if (font !== "Arial") {
+                            let linkId = 'admin-font-' + font.replace(/\s+/g, '');
+                            if(!document.getElementById(linkId)) {
+                                let link = document.createElement('link'); link.id = linkId; link.rel = 'stylesheet';
+                                link.href = `https://fonts.googleapis.com/css2?family=${font.replace(/\s+/g, '+')}&display=swap`;
+                                document.head.appendChild(link);
+                            }
+                        }
+                        wrapper.appendChild(div);
+                    }
+
+                    openModal('adminPreviewModal');
+                };
+            }
             // --- DISPLAY CANCEL REASON ---
             if (o.status === 'Cancelled') {
                 const reasonDiv = document.createElement('div');
@@ -500,6 +612,7 @@ window.filterOrders = (status) => {
         }
     });
 };
+
 // ==========================================
 // 5. CHAT SYSTEM 
 // ==========================================
@@ -559,6 +672,17 @@ window.filterChatUsers = (filter) => {
 function loadChatUsers() {
     const list = document.getElementById('adminChatUserList');
     if (!list) return;
+    
+    // Show skeleton loading for chat users list
+    list.innerHTML = Array(4).fill(0).map(() => `
+        <div class="user-tab" style="display: flex; align-items: center; gap: 12px; padding: 15px;">
+            <div class="skeleton-loader" style="width: 48px; height: 48px; border-radius: 50%;"></div>
+            <div style="flex: 1;">
+                <div class="skeleton-loader skeleton-text" style="width: 60%;"></div>
+                <div class="skeleton-loader skeleton-text" style="width: 40%;"></div>
+            </div>
+        </div>
+    `).join('');
 
     const q = query(collection(db, "chats"), orderBy("timestamp", "desc"));
     
@@ -673,7 +797,7 @@ function createUserTabElement(uid, info) {
             </div>
             <div class="user-info">
                 <div class="user-name">
-                    <span>${info.displayName}</span>
+                    <span class="user-name-text">${info.displayName}</span>
                     <span class="user-time">${timeStr}</span>
                 </div>
                 <div class="user-last-msg">
@@ -779,6 +903,16 @@ function createMessageElement(message) {
         timeStr = dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     }
 
+    let uploadedImageHTML = "";
+    if (message.imageBase64) {
+        uploadedImageHTML = `
+            <div style="margin-top: 5px; margin-bottom: 5px;">
+                <img src="${message.imageBase64}" style="max-width: 100%; max-height: 200px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1);" onclick="window.open('${message.imageBase64}', '_blank')">
+            </div>
+        `;
+        if (message.text === "📷 Sent an image") message.text = ""; // Hide fallback text
+    }
+
     // --- NEW: RICH ORDER CARD WITH CLICK EVENT ---
     let orderChipHTML = "";
     if (message.linkedOrderId) {
@@ -812,6 +946,7 @@ function createMessageElement(message) {
         <div class="message-sender">${senderLabel}</div>
         <div class="message-bubble">
             ${orderChipHTML}
+            ${uploadedImageHTML}
             ${escapeHtml(message.text || "")}
         </div>
         <div class="message-time">${timeStr}</div>
@@ -995,15 +1130,179 @@ window.loadFullCustomerHistory = () => {
     showAdminSection('orders');
 };
 
-function updateUnreadBadgeTotal() {
-    let totalUnread = 0;
-    userMap.forEach(info => {
-        totalUnread += info.unread;
-    });
+window.loadFullCustomerHistory = async () => {
+    if (!selectedUserId) return;
     
-    if (totalUnread > 0) {
-        document.title = `(${totalUnread}) Admin Dashboard`;
-    } else {
-        document.title = 'Admin Dashboard';
+    const container = document.getElementById('customerHistoryContainer');
+    const modalTitle = document.getElementById('historyModalTitle');
+    
+    if (!container || !modalTitle) {
+        console.error("Modal HTML is missing from admin.html!");
+        return;
     }
-}
+
+    // Get the customer's name from the active chat tab
+    const activeTab = document.querySelector('.user-tab.active');
+    const customerName = activeTab ? activeTab.querySelector('.user-name span').textContent : "Customer";
+    
+    modalTitle.textContent = `${customerName}'s Orders`;
+    
+    // Show loading spinner
+    container.innerHTML = `
+        <div style="text-align:center; padding: 40px;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 30px; color: var(--primary);"></i>
+            <p style="color: var(--taupe); margin-top: 15px;">Fetching order history...</p>
+        </div>
+    `;
+    
+    // Open the modal
+    window.openModal('customerHistoryModal');
+    
+    try {
+        // FIX: We removed orderBy("date") from the Firebase query to avoid the Index Error.
+        const q = query(
+            collection(db, "orders"),
+            where("userId", "==", selectedUserId)
+        );
+        
+        const snapshot = await getDocs(q);
+        container.innerHTML = "";
+        
+        if (snapshot.empty) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: var(--taupe);">
+                    <i class="fas fa-shopping-bag" style="font-size: 40px; color: var(--sand); margin-bottom: 15px;"></i>
+                    <p>No orders found for this customer yet.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        // 1. Put all orders into a Javascript Array
+        const userOrders = [];
+        snapshot.forEach(docSnap => {
+            userOrders.push({ id: docSnap.id, ...docSnap.data() });
+        });
+        
+        // 2. Sort the array newest to oldest using Javascript (Bypasses Firebase Index limit)
+        userOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // 3. Render the cards
+        userOrders.forEach(o => {
+            const orderDate = new Date(o.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            
+            const statusColors = {
+                'Pending': { bg: '#fff3cd', text: '#856404' },
+                'Preparing': { bg: '#cce5ff', text: '#004085' },
+                'Ready': { bg: '#d4edda', text: '#155724' },
+                'Completed': { bg: '#d1e7dd', text: '#0f5132' },
+                'Cancelled': { bg: '#ffebee', text: '#c62828' }
+            };
+            const sColor = statusColors[o.status] || statusColors['Pending'];
+
+            container.innerHTML += `
+                <div style="background: white; border: 1px solid var(--border-light); border-radius: 12px; padding: 15px; margin-bottom: 15px; display: flex; gap: 15px; align-items: start; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+                    <img src="${o.imageUrl || 'assets/logo.png'}" style="width: 70px; height: 70px; border-radius: 8px; object-fit: cover; border: 1px solid var(--sand);">
+                    <div style="flex: 1;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <strong style="color: var(--walnut); font-size: 1.05rem;">${o.productName}</strong>
+                            <span style="background: ${sColor.bg}; color: ${sColor.text}; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${o.status}</span>
+                        </div>
+                        <div style="font-size: 0.8rem; color: var(--taupe); display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span>#${o.id.slice(-8).toUpperCase()}</span>
+                            <span>${orderDate}</span>
+                        </div>
+                        <div style="font-weight: 700; color: var(--primary); font-size: 0.95rem;">
+                            ₱${o.totalPrice?.toLocaleString() || '0'} <span style="font-weight: normal; font-size: 0.8rem; color: var(--taupe);">x${o.quantity}</span>
+                        </div>
+                        ${o.personalization ? `
+                            <div style="margin-top: 8px; font-size: 0.8rem; background: var(--cream); padding: 8px 10px; border-radius: 6px; color: var(--walnut); border-left: 3px solid var(--primary);">
+                                <strong>Text:</strong> "${o.personalization}"
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        });
+        
+    } catch (error) {
+        console.error("Error loading customer history:", error);
+        container.innerHTML = '<p style="text-align: center; color: #e74c3c; padding: 20px;">Failed to load order history. Check console for details.</p>';
+    }
+};
+
+window.sendBase64Image = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    // 1. Ensure an admin has selected a customer to chat with!
+    if (!selectedUserId) {
+        showToast("Please select a customer from the left sidebar first.", 'error');
+        return;
+    }
+
+    // 2. Target the correct Admin input box
+    const inputField = document.getElementById('adminChatInput');
+    const originalPlaceholder = inputField.placeholder;
+    
+    // Grab the customer name for the database record
+    const activeTab = document.querySelector('.user-tab.active');
+    const customerName = activeTab ? activeTab.querySelector('.user-name span').textContent : "Customer";
+    
+    try {
+        inputField.placeholder = "Compressing & sending image...";
+        inputField.disabled = true;
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        
+        reader.onload = (e) => {
+            const img = new Image();
+            img.src = e.target.result;
+            
+            img.onload = async () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 800; 
+                const MAX_HEIGHT = 800;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                } else {
+                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const base64String = canvas.toDataURL('image/jpeg', 0.7);
+
+                try {
+                    // 3. Send as Admin to the specific Customer
+                    await addDoc(collection(db, "chats"), {
+                        userId: selectedUserId,
+                        userEmail: customerName,
+                        userName: customerName,
+                        text: "Sent an image", 
+                        imageBase64: base64String, 
+                        sender: "admin", // Sent by Admin!
+                        timestamp: new Date(),
+                        readByUser: false // Customer hasn't read it yet
+                    });
+                } catch (dbError) {
+                    console.error("Firestore error:", dbError);
+                    showToast("Failed to send image.", 'error');
+                }
+            };
+        };
+    } catch (error) {
+        console.error("Image processing failed:", error);
+    } finally {
+        inputField.placeholder = originalPlaceholder;
+        inputField.disabled = false;
+        event.target.value = ""; 
+    }
+};

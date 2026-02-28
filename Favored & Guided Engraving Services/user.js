@@ -30,7 +30,7 @@ onAuthStateChanged(auth, async (user) => {
 // --- NAVIGATION ---
 window.showSection = (id) => {
     // Hide all sections including hero
-    ['hero', 'products', 'account', 'edit-details', 'change-password', 'order', 'wishlist'].forEach(sec => {
+    ['hero', 'products', 'account', 'edit-details', 'change-password', 'order', 'wishlist', 'about'].forEach(sec => {
         const el = document.getElementById(sec);
         if(el) el.style.display = 'none';
     });
@@ -48,9 +48,13 @@ window.showSection = (id) => {
         if(id === 'wishlist') {
             loadUserWishlist();
         }
+        // If showing about, ensure it's visible (no additional loading needed)
+        if(id === 'about') {
+            // About section is static HTML, just needs to be displayed
+            console.log('About section displayed');
+        }
     }
 
-    // Update active nav link
     document.querySelectorAll('.nav-center a').forEach(a => a.classList.remove('active'));
     const navLink = document.getElementById('nav-' + id);
     if(navLink) navLink.classList.add('active');
@@ -61,6 +65,25 @@ window.logoutUser = async () => {
     window.location.href = "/";
 };
 
+// Add this to user.js
+document.addEventListener('DOMContentLoaded', () => {
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    const dropdownContent = document.querySelector('.dropdown-content');
+    
+    if (dropdownToggle && dropdownContent) {
+        dropdownToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownContent.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!dropdownToggle.contains(e.target) && !dropdownContent.contains(e.target)) {
+                dropdownContent.classList.remove('show');
+            }
+        });
+    }
+});
 // --- PROFILE MANAGEMENT ---
 async function loadUserProfile(uid) {
     try {
@@ -343,23 +366,134 @@ async function loadUserOrders(uid) {
                         ${getTrackerHTML(o.status)}
 
                         ${o.status === 'Pending' ? `
+                        <div class="order-actions-container">
+                            <button class="btn-primary" onclick="contactSupport('${o.id}')">
+                                <i class="fas fa-headset"></i> Support
+                            </button>
+                            
+                            ${(o.elements && o.elements.length > 0) || o.posX !== undefined ? `
+                            <button class="btn-outline" onclick="viewMyDesign('${o.id}')">
+                                <i class="fas fa-eye"></i> View My Design
+                            </button>
+                            ` : ''}
+                        </div>
+                        
                         <div class="order-cancel-container">
                             <button class="btn-outline btn-cancel-order" onclick="openCancelModal('${o.id}')">
                                 <i class="fas fa-times-circle"></i> Cancel Order
                             </button>
                         </div>
-                        ` : ''}
-
-                        <button class="btn-primary" onclick="contactSupport('${o.id}')" style="flex: 1; padding: 10px;">
+                        ` : `
+                        <div class="order-actions-container">
+                            <button class="btn-primary" onclick="contactSupport('${o.id}')">
                                 <i class="fas fa-headset"></i> Support
                             </button>
+                            
+                            ${(o.elements && o.elements.length > 0) || o.posX !== undefined ? `
+                            <button class="btn-outline" onclick="viewMyDesign('${o.id}')">
+                                <i class="fas fa-eye"></i> View My Design
+                            </button>
+                            ` : ''}
                         </div>
+                        `}
                     </div>
                 </div>
             `;
         });
     });
 }
+
+// --- USER VISUAL DESIGN PROOF (SUPPORTS NEW AND OLD ORDERS) ---
+window.viewMyDesign = async (orderId) => {
+    try {
+        const orderSnap = await getDoc(doc(db, "orders", orderId));
+        if (!orderSnap.exists()) return;
+        const data = orderSnap.data();
+
+        document.getElementById('userPreviewImg').src = data.imageUrl;
+        
+        // 1. Find the wrapper inside userPreviewModal
+        const wrapper = document.getElementById('userCanvas'); 
+        if(!wrapper) {
+            console.error("Could not find userCanvas in HTML!");
+            return;
+        }
+        
+        // 2. Clear out any old text/designs, but keep the product image!
+        Array.from(wrapper.children).forEach(child => {
+            if (child.tagName !== 'IMG') child.remove();
+        });
+
+        // 3A. RENDER NEW MULTI-ITEM CANVAS DESIGNS
+        if (data.elements && Array.isArray(data.elements)) {
+            data.elements.forEach(item => {
+                const div = document.createElement('div');
+                div.innerText = item.content;
+                div.style.position = 'absolute';
+                div.style.top = '50%';
+                div.style.left = '50%';
+                div.style.color = '#2c1a0e';
+                div.style.mixBlendMode = 'multiply';
+                div.style.textAlign = 'center';
+                div.style.whiteSpace = 'pre-wrap';
+                div.style.lineHeight = item.type === 'text' ? '1.2' : '1';
+                div.style.pointerEvents = 'none';
+                
+                div.style.fontSize = item.size + "px";
+                div.style.transform = `translate(calc(-50% + ${item.x}px), calc(-50% + ${item.y}px)) rotate(${item.rotation}deg)`;
+                
+                if(item.font && item.font.toLowerCase() !== "arial") {
+                    div.style.fontFamily = `"${item.font}", sans-serif`;
+                    let linkId = 'preview-font-' + item.font.replace(/\s+/g, '');
+                    if(!document.getElementById(linkId)) {
+                        let link = document.createElement('link'); link.id = linkId; link.rel = 'stylesheet';
+                        link.href = `https://fonts.googleapis.com/css2?family=${item.font.replace(/\s+/g, '+')}&display=swap`;
+                        document.head.appendChild(link);
+                    }
+                } else {
+                    div.style.fontFamily = "Arial, sans-serif";
+                }
+                wrapper.appendChild(div);
+            });
+        } 
+        // 3B. FALLBACK FOR OLD SINGLE-TEXT DESIGNS
+        else if (data.posX !== undefined) {
+            const div = document.createElement('div');
+            div.innerText = data.personalization || data.engravingText || "No text";
+            div.style.position = 'absolute';
+            div.style.top = '50%';
+            div.style.left = '50%';
+            div.style.color = '#2c1a0e';
+            div.style.mixBlendMode = 'multiply';
+            div.style.textAlign = 'center';
+            div.style.whiteSpace = 'pre-wrap';
+            div.style.pointerEvents = 'none';
+
+            const rot = data.engravingRotation || 0;
+            div.style.fontSize = (data.engravingSize || 30) + "px";
+            div.style.transform = `translate(calc(-50% + ${data.posX}px), calc(-50% + ${data.posY}px)) rotate(${rot}deg)`;
+            
+            const font = data.engravingFont || "Arial";
+            div.style.fontFamily = `"${font}", sans-serif`;
+
+            if (font !== "Arial") {
+                let linkId = 'preview-font-' + font.replace(/\s+/g, '');
+                if(!document.getElementById(linkId)) {
+                    let link = document.createElement('link'); link.id = linkId; link.rel = 'stylesheet';
+                    link.href = `https://fonts.googleapis.com/css2?family=${font.replace(/\s+/g, '+')}&display=swap`;
+                    document.head.appendChild(link);
+                }
+            }
+            wrapper.appendChild(div);
+        }
+
+        window.openModal('userPreviewModal');
+
+    } catch (error) {
+        console.error("Error loading design preview:", error);
+        if (typeof showToast === 'function') showToast("Failed to load design preview.", "error");
+    }
+};
 
 function updateOrderStats(orders) {
     const statsContainer = document.getElementById('order-stats');
@@ -414,6 +548,8 @@ window.filterUserOrders = (status) => {
     });
 };
 
+
+
 // Opens the cancellation modal and stores the order ID
 window.openCancelModal = (orderId) => {
     document.getElementById('cancelOrderIdToSubmit').value = orderId;
@@ -452,7 +588,7 @@ window.submitCancellation = async () => {
 
     } catch (error) {
         console.error("Error cancelling order:", error);
-        if (typeof showToast === 'function') showToast("Failed to cancel: " + error.message, "error");
+        if (typeof showToast === 'function') ("Failed to cancel: " + error.message, "error");
     } finally {
         btn.innerHTML = 'Confirm Cancel';
         btn.disabled = false;
@@ -922,6 +1058,15 @@ function getEstimatedCompletion(status) {
 async function loadProducts() {
     const container = document.getElementById('products-container');
     if(!container) return;
+    
+    // Show skeleton loading for logged-in users
+    container.innerHTML = Array(4).fill(0).map(() => `
+        <div class="product-card">
+            <div class="skeleton-loader skeleton-product"></div>
+            <div class="skeleton-loader skeleton-text"></div>
+            <div class="skeleton-loader skeleton-text short"></div>
+        </div>
+    `).join('');
 
     // Load user's wishlist if logged in
     if(currentUser) {
@@ -964,90 +1109,265 @@ async function loadProducts() {
     });
 }
 
+let currentDesignData = null; 
+
 // Open Modal using the ID to lookup data
 window.openProductDetail = (id) => {
-    currentProduct = window.productsData[id]; // Retrieve from global storage
-    
+    currentProduct = window.productsData[id];
     if(!currentProduct) return;
 
-    const stockCount = currentProduct.stock !== undefined ? currentProduct.stock : 0;
+    // --- NEW: Reset design memory for every new product viewed ---
+    currentDesignData = null; 
 
+    const stockCount = currentProduct.stock !== undefined ? currentProduct.stock : 0;
     document.getElementById('detailName').innerText = currentProduct.name;
     document.getElementById('detailDesc').innerText = currentProduct.description || "No description available.";
     document.getElementById('detailPrice').innerText = "₱" + currentProduct.price;
     document.getElementById('detailImg').src = currentProduct.imageUrl;
     
-    // --- NEW: Display the stock in gray ---
-    const stockDisplay = document.getElementById('detailStock');
-    if (stockDisplay) {
-        stockDisplay.innerHTML = `<i class="fas fa-box"></i> Stock: ${stockCount}`;
-        stockDisplay.style.color = "var(--taupe)"; // Standard gray color
-    }
-
-    // --- NEW: Lock button and quantity if stock is 0 ---
-    const qtyInput = document.getElementById('orderQty');
-    const orderBtn = document.querySelector('#productDetailsModal .btn-primary');
-
-    if (stockCount <= 0) {
-        // Out of stock behavior
-        qtyInput.value = 0;
-        qtyInput.disabled = true;
-        
-        if (orderBtn) {
-            orderBtn.innerText = "Out of Stock";
-            orderBtn.disabled = true;
-            orderBtn.style.background = "var(--sand)";
-            orderBtn.style.borderColor = "var(--sand)";
-            orderBtn.style.cursor = "not-allowed";
-        }
-    } else {
-        // In stock behavior
-        qtyInput.value = 1;
-        qtyInput.max = stockCount; // Optional: prevents typing a number higher than stock
-        qtyInput.disabled = false;
-        
-        if (orderBtn) {
-            orderBtn.innerText = "Place Order";
-            orderBtn.disabled = false;
-            orderBtn.style.background = ""; // Resets to your default base.css style
-            orderBtn.style.borderColor = "";
-            orderBtn.style.cursor = "pointer";
-        }
-    }
-    
-    // Reset personalization text
-    document.getElementById('engravingText').value = "";
-    
+    // Reset inputs
+    document.getElementById('orderQty').value = 1;
     document.getElementById('productDetailsModal').style.display = 'flex';
 };
-window.placeOrder = async () => {
+
+
+// --- DESIGN STUDIO STATE ---
+// --- DESIGN STUDIO STATE (MULTI-ITEM) ---
+let designItems = []; // Array to hold all text and borders
+let selectedItemId = null;
+let studioDragging = false;
+let initialX, initialY;
+
+// ==========================================
+// DESIGN STUDIO ENGINE
+// ==========================================
+
+window.openDesignStudio = () => {
     if(!currentProduct) return;
+    window.closeModal('productDetailsModal');
+    window.openModal('designStudioModal');
+    
+    document.getElementById('studioImg').src = currentProduct.imageUrl;
+    
+    // Reset inputs
+    document.getElementById('studioTextAdd').value = "";
+    document.getElementById('studioFont').value = "";
+    
+    if (!currentDesignData || !currentDesignData.elements) {
+        designItems = [];
+    } else {
+        // Load saved elements array
+        designItems = JSON.parse(JSON.stringify(currentDesignData.elements)); 
+    }
+    
+    selectedItemId = null;
+    renderCanvas();
+};
 
-    const qty = document.getElementById('orderQty').value;
-    const note = document.getElementById('engravingText').value;
+window.addTextToCanvas = () => {
+    const textVal = document.getElementById('studioTextAdd').value.trim();
+    if (!textVal) return alert("Please type some text first!");
+    
+    const newItem = {
+        id: Date.now(),
+        type: 'text',
+        content: textVal,
+        font: 'Arial',
+        size: 30,
+        rotation: 0,
+        x: 0, y: 0
+    };
+    
+    designItems.push(newItem);
+    selectedItemId = newItem.id;
+    document.getElementById('studioTextAdd').value = ""; // clear input
+    renderCanvas();
+};
 
-    try {
-        await addDoc(collection(db, "orders"), {
-            userId: currentUser.uid,
-            userEmail: currentUser.email,
-            productName: currentProduct.name,
-            productId: currentProduct.id,
-            price: Number(currentProduct.price),
-            quantity: Number(qty),
-            totalPrice: Number(currentProduct.price) * Number(qty),
-            personalization: note,
-            imageUrl: currentProduct.imageUrl, 
-            status: "Pending", 
-            date: new Date().toISOString()
-        });
+window.addBorderToCanvas = () => {
+    const borderVal = document.getElementById('studioBorderAdd').value;
+    
+    const newItem = {
+        id: Date.now(),
+        type: 'border',
+        content: borderVal,
+        font: 'Arial',
+        size: 40,
+        rotation: 0,
+        x: 0, y: 0
+    };
+    
+    designItems.push(newItem);
+    selectedItemId = newItem.id;
+    renderCanvas();
+};
+
+window.renderCanvas = () => {
+    const wrapper = document.getElementById('canvasItemsWrapper');
+    wrapper.innerHTML = ""; // Clear current canvas
+    
+    designItems.forEach(item => {
+        const div = document.createElement('div');
+        div.className = "canvas-item";
+        div.setAttribute('data-id', item.id);
+        div.innerText = item.content;
         
-        showToast("Order Placed Successfully!");
-        window.closeModal('productDetailsModal');
-        window.showSection('order'); // Auto-redirect to My Orders page
-    } catch(e) { 
-        showToast("Order failed: " + e.message, 'error'); 
+        // Base styling for all items
+        div.style.position = 'absolute';
+        div.style.top = '50%';
+        div.style.left = '50%';
+        div.style.cursor = 'move';
+        div.style.color = '#2c1a0e';
+        div.style.mixBlendMode = 'multiply';
+        div.style.textAlign = 'center';
+        div.style.whiteSpace = 'pre-wrap';
+        div.style.lineHeight = item.type === 'text' ? '1.2' : '1';
+        div.style.pointerEvents = 'auto'; // allow clicking
+        div.style.zIndex = '20';
+        
+        // Apply item properties
+        div.style.fontSize = item.size + "px";
+        div.style.transform = `translate(calc(-50% + ${item.x}px), calc(-50% + ${item.y}px)) rotate(${item.rotation}deg)`;
+        
+        if(item.font && item.font.toLowerCase() !== "arial") {
+            let linkId = 'font-' + item.font.replace(/\s+/g, '');
+            if(!document.getElementById(linkId)) {
+                let link = document.createElement('link'); 
+                link.id = linkId; 
+                link.rel = 'stylesheet';
+                link.href = `https://fonts.googleapis.com/css2?family=${item.font.replace(/\s+/g, '+')}&display=swap`;
+                document.head.appendChild(link);
+            }
+            div.style.fontFamily = `"${item.font}", sans-serif`;
+        } else {
+            div.style.fontFamily = "Arial, sans-serif";
+        }
+        
+        // Highlight if selected
+        if (item.id === selectedItemId) {
+            div.style.outline = "2px dashed #f39c12";
+            div.style.outlineOffset = "4px";
+            div.style.zIndex = '30'; // Bring selected to front
+        }
+        
+        wrapper.appendChild(div);
+    });
+    
+    updatePropertiesPanel();
+};
+
+function updatePropertiesPanel() {
+    const panel = document.getElementById('editPropertiesPanel');
+    const item = designItems.find(i => i.id === selectedItemId);
+    
+    if (item) {
+        panel.style.opacity = "1";
+        panel.style.pointerEvents = "auto";
+        
+        document.getElementById('studioFont').value = item.font || "Arial";
+        document.getElementById('studioSizeSlider').value = item.size;
+        document.getElementById('studioSizeLabel').innerText = item.size + "px";
+        document.getElementById('studioRotateSlider').value = item.rotation;
+        document.getElementById('studioRotateLabel').innerText = item.rotation + "°";
+    } else {
+        // Gray out panel if nothing selected
+        panel.style.opacity = "0.4";
+        panel.style.pointerEvents = "none";
+    }
+}
+
+window.updateSelectedItem = () => {
+    if (!selectedItemId) return;
+    const item = designItems.find(i => i.id === selectedItemId);
+    if (!item) return;
+    
+    item.font = document.getElementById('studioFont').value || "Arial";
+    item.size = parseInt(document.getElementById('studioSizeSlider').value);
+    item.rotation = parseInt(document.getElementById('studioRotateSlider').value);
+    
+    renderCanvas();
+};
+
+window.deleteSelectedItem = () => {
+    if (!selectedItemId) return;
+    designItems = designItems.filter(i => i.id !== selectedItemId);
+    selectedItemId = null;
+    renderCanvas();
+};
+
+window.saveStudioDesign = () => {
+    if (designItems.length === 0) {
+        alert("Please add at least one text or border to your design!");
+        return;
+    }
+
+    // Save the entire array of items
+    currentDesignData = {
+        elements: JSON.parse(JSON.stringify(designItems)) 
+    };
+
+    window.closeModal('designStudioModal');
+    window.openModal('productDetailsModal');
+
+    const pBtn = document.getElementById('personalizeBtn');
+    if (pBtn) {
+        pBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Re-customize';
+        pBtn.style.background = "#6d4c41"; 
     }
 };
+
+// --- GLOBAL DRAG ENGINE ---
+window.addEventListener("mousedown", dragStart);
+window.addEventListener("touchstart", dragStart, { passive: false });
+window.addEventListener("mouseup", dragEnd);
+window.addEventListener("touchend", dragEnd);
+window.addEventListener("mousemove", dragMove);
+window.addEventListener("touchmove", dragMove, { passive: false });
+
+function dragStart(e) {
+    const target = e.target.closest('.canvas-item');
+    
+    if (target) {
+        // User clicked an item
+        selectedItemId = parseInt(target.getAttribute('data-id'));
+        renderCanvas(); // Update highlights and panel
+        
+        const item = designItems.find(i => i.id === selectedItemId);
+        if(!item) return;
+
+        const clientX = e.type === "touchstart" ? e.touches[0].clientX : e.clientX;
+        const clientY = e.type === "touchstart" ? e.touches[0].clientY : e.clientY;
+        
+        initialX = clientX - item.x;
+        initialY = clientY - item.y;
+        studioDragging = true;
+    } 
+    else if (e.target.id === "canvasContainer" || e.target.id === "studioImg") {
+        // User clicked the background, deselect everything
+        selectedItemId = null;
+        renderCanvas();
+    }
+}
+
+function dragEnd() { 
+    studioDragging = false; 
+}
+
+function dragMove(e) {
+    if (!studioDragging || !selectedItemId) return;
+    e.preventDefault(); 
+    
+    const clientX = e.type === "touchmove" ? e.touches[0].clientX : e.clientX;
+    const clientY = e.type === "touchmove" ? e.touches[0].clientY : e.clientY;
+    
+    const item = designItems.find(i => i.id === selectedItemId);
+    if(item) {
+        item.x = clientX - initialX;
+        item.y = clientY - initialY;
+        renderCanvas(); // Re-render to show movement
+    }
+}
+
 
 // Add this helper function
 window.goToOrders = () => {
@@ -1055,20 +1375,29 @@ window.goToOrders = () => {
     window.showSection('order');
 };
 
-// Update your existing placeOrder function
+// --- FIXED PLACE ORDER FUNCTION ---
 window.placeOrder = async () => {
-    if(!currentProduct) return;
+    if(!currentProduct || !currentUser) return;
 
-    // Show loading state on the button
-    const orderBtn = document.querySelector('#productDetailsModal .btn-primary');
-    const originalText = orderBtn.innerText;
-    orderBtn.disabled = true;
-    orderBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Order...';
+    // 1. Force the user to use the Design Studio first
+    if (!currentDesignData) {
+        alert("Please click 'Customize & Design' to create your engraving layout before placing an order.");
+        return;
+    }
 
-    const qty = document.getElementById('orderQty').value;
-    const note = document.getElementById('engravingText').value;
+    const qtyInput = document.getElementById('orderQty');
+    if (!qtyInput) {
+        console.error("Could not find order quantity input.");
+        return;
+    }
+    const qty = qtyInput.value;
 
+    const orderBtn = document.querySelector('#productDetailsModal .btn-primary:last-of-type');
+    
     try {
+        // Disable the button so they can't double-click, but don't change the text
+        orderBtn.disabled = true; 
+
         await addDoc(collection(db, "orders"), {
             userId: currentUser.uid,
             userEmail: currentUser.email,
@@ -1077,24 +1406,34 @@ window.placeOrder = async () => {
             price: Number(currentProduct.price),
             quantity: Number(qty),
             totalPrice: Number(currentProduct.price) * Number(qty),
-            personalization: note,
+            
+            // This grabs ALL the data saved from the Design Studio (text, font, size, x, y)
+            ...currentDesignData, 
+            
             imageUrl: currentProduct.imageUrl,
             status: "Pending", 
             date: new Date().toISOString()
         });
         
-        // 1. Close the product detail modal
-        window.closeModal('productDetailsModal');
+        // 1. Clear memory so the next product starts fresh
+        currentDesignData = null; 
         
-        // 2. Show the SUCCESS confirmation modal
+        // 2. Reset the customize button text for the next time
+        const personalizeBtn = document.getElementById('personalizeBtn');
+        if (personalizeBtn) {
+            personalizeBtn.innerHTML = '<i class="fas fa-magic"></i> Customize & Design';
+            personalizeBtn.style.background = "var(--walnut)"; 
+        }
+
+        // 3. Close details and show success
+        window.closeModal('productDetailsModal');
         document.getElementById('orderSuccessModal').style.display = 'flex';
         
     } catch(e) { 
-        showToast("Order failed: " + e.message, 'error'); 
+        console.error("Order Error:", e);
+        alert("Order failed. Please try again. Error: " + e.message);
     } finally {
-        // Reset button state
         orderBtn.disabled = false;
-        orderBtn.innerText = originalText;
     }
 };
 
@@ -1109,6 +1448,22 @@ window.toggleChat = () => {
     } else {
         body.style.display = 'none';
         icon.className = 'fas fa-chevron-up';
+    }
+};
+
+// --- TOGGLE FAQ MENU ---
+window.toggleFAQ = () => {
+    const faqContainer = document.getElementById('faq-buttons-container');
+    const faqIcon = document.getElementById('faq-icon');
+    
+    if (faqContainer.style.display === 'none') {
+        // Open it
+        faqContainer.style.display = 'flex';
+        faqIcon.className = 'fas fa-chevron-down';
+    } else {
+        // Close it
+        faqContainer.style.display = 'none';
+        faqIcon.className = 'fas fa-chevron-up';
     }
 };
 
@@ -1186,9 +1541,19 @@ function listenForMessages() {
                 `;
             } 
 
+            let uploadedImageHTML = "";
+            if (m.imageBase64) {
+                uploadedImageHTML = `
+                    <div style="margin-top: 5px; margin-bottom: 5px;">
+                        <img src="${m.imageBase64}" style="max-width: 100%; max-height: 200px; border-radius: 8px; cursor: pointer; border: 1px solid rgba(0,0,0,0.1);" onclick="window.open('${m.imageBase64}', '_blank')">
+                    </div>
+                `;
+                if (m.text === "📷 Sent an image") m.text = ""; // Hide fallback text if image renders
+            }
             msgWrapper.innerHTML = `
                 <div class="msg ${side}">
                     ${orderChipHTML}
+                    ${uploadedImageHTML}
                     ${escapeHtml(m.text)}
                 </div>
                 <div class="msg-time">${timeStr}</div>
@@ -1218,6 +1583,69 @@ window.sendMessage = async () => {
     input.value = "";
 };
 
+window.sendBase64Image = async (event) => {
+    const file = event.target.files[0];
+    if (!file || !currentUser) return;
+
+    const inputField = document.getElementById('chatInput');
+    const originalPlaceholder = inputField.placeholder;
+    
+    try {
+        inputField.placeholder = "Compressing & sending...";
+        inputField.disabled = true;
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        
+        reader.onload = (e) => {
+            const img = new Image();
+            img.src = e.target.result;
+            
+            img.onload = async () => {
+                // Compress image to safe limits (max 800px)
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 800; 
+                const MAX_HEIGHT = 800;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                } else {
+                    if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const base64String = canvas.toDataURL('image/jpeg', 0.7);
+
+                try {
+                    await addDoc(collection(db, "chats"), {
+                        userId: currentUser.uid,
+                        userEmail: currentUser.email,
+                        text: "Sent an image", 
+                        imageBase64: base64String, 
+                        sender: "user",
+                        timestamp: new Date()
+                    });
+                } catch (dbError) {
+                    console.error("Firestore error:", dbError);
+                    showToast("Failed to send image.", "error");
+                }
+            };
+        };
+    } catch (error) {
+        console.error("Image processing failed:", error);
+    } finally {
+        inputField.placeholder = originalPlaceholder;
+        inputField.disabled = false;
+        event.target.value = ""; 
+    }
+};
+
 function escapeHtml(unsafe) {
     if (!unsafe) return "";
     return unsafe.toString()
@@ -1227,6 +1655,43 @@ function escapeHtml(unsafe) {
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
 }
+
+// --- NEW: AUTOMATED FAQ CHATBOT ---
+window.sendFAQ = async (questionText, answerText) => {
+    if (!currentUser) return;
+
+    try {
+        // 1. Send the user's question to the chat
+        await addDoc(collection(db, "chats"), {
+            userId: currentUser.uid,
+            userEmail: currentUser.email,
+            text: questionText,
+            sender: "user",
+            timestamp: new Date()
+        });
+
+        // 2. Wait half a second to make it feel like a real bot typing
+        setTimeout(async () => {
+            // 3. Send the automated answer back as the Admin
+            await addDoc(collection(db, "chats"), {
+                userId: currentUser.uid,
+                userEmail: currentUser.email,
+                userName: currentUser.email,
+                text: answerText,
+                sender: "admin",
+                timestamp: new Date()
+            });
+            
+            // Scroll to the bottom to see the new message
+            const container = document.getElementById('chat-messages');
+            if (container) container.scrollTop = container.scrollHeight;
+            
+        }, 600); // 600 milliseconds delay
+
+    } catch (error) {
+        console.error("FAQ Error:", error);
+    }
+};
 
 // --- WISHLIST TOGGLE ---
 window.toggleWishlist = async (productId, btnElement) => {

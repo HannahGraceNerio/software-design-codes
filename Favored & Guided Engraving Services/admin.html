@@ -228,6 +228,10 @@
                         <button class="btn-send" onclick="sendAdminMessage()">
                             <i class="fas fa-paper-plane"></i>
                         </button>
+                        <input type="file" id="adminChatImageInput" accept="image/*" style="display: none;" onchange="sendBase64Image(event)">
+                        <button onclick="document.getElementById('adminChatImageInput').click()" class="btn-attach">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
                     </div>
                     <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 0.8rem; color: var(--taupe);">
                         <span><i class="fas fa-enter"></i> Enter to send</span>
@@ -239,69 +243,84 @@
     </section>
 </main>
 
-<!-- Add Product Modal (Improved) -->
+<!-- Add Product Modal (Improved Layout) -->
 <div class="modal" id="addProductModal">
-    <div class="modal-box" style="max-width: 500px; padding: 45px;">
+    <div class="modal-box" style="max-width: 500px; padding: 30px;">
         <button class="modal-close" onclick="closeModal('addProductModal')">&times;</button>
-        <h3 style="font-size: 1.8rem; margin-bottom: 30px; text-align: center;">Add New Product</h3>
+        <h3 style="font-size: 1.6rem; margin-bottom: 20px; text-align: center; color: var(--walnut);">Add New Product</h3>
         
-        <div style="margin-bottom: 25px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Product Name</label>
-            <input type="text" id="addName" placeholder="e.g., Wooden Cross Engraving" style="padding: 14px;" />
-        </div>
-        
-        <div style="margin-bottom: 25px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Price (₱)</label>
-            <input type="number" id="addPrice" placeholder="0.00" min="0" step="0.01" style="padding: 14px;" />
-        </div>
-        
-        <div style="margin-bottom: 25px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Initial Stock</label>
-            <input type="number" id="addStock" value="10" min="0" style="padding: 14px;" />
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Product Image</label>
-            <div style="border: 2px dashed var(--sand); border-radius: 15px; padding: 30px; text-align: center; background: var(--cream); cursor: pointer;" onclick="document.getElementById('addImageFile').click()">
-                <i class="fas fa-cloud-upload-alt" style="font-size: 40px; color: var(--primary); margin-bottom: 10px; display: block;"></i>
-                <p style="color: var(--taupe);">Click to upload or drag and drop</p>
-                <p style="font-size: 0.8rem; color: var(--sand);">PNG, JPG up to 5MB</p>
+        <div style="display: flex; flex-direction: column; gap: 16px; max-height: calc(90vh - 120px); overflow-y: auto; padding-right: 5px;">
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Product Name</label>
+                <input type="text" id="addName" placeholder="e.g., Wooden Cross Engraving" style="padding: 12px; margin-bottom: 0;" />
             </div>
-            <input type="file" id="addImageFile" accept="image/*" style="display: none;" onchange="updateFileName(this)">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Price (₱)</label>
+                    <input type="number" id="addPrice" placeholder="0.00" min="0" step="0.01" style="padding: 12px; margin-bottom: 0;" />
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Initial Stock</label>
+                    <input type="number" id="addStock" value="10" min="0" style="padding: 12px; margin-bottom: 0;" />
+                </div>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Product Image</label>
+                <div style="border: 2px dashed var(--sand); border-radius: 15px; padding: 20px; text-align: center; background: var(--cream); cursor: pointer;" onclick="document.getElementById('addImageFile').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: var(--primary); margin-bottom: 8px; display: block;"></i>
+                    <p style="color: var(--taupe); margin: 0 0 4px; font-size: 0.9rem;">Click to upload</p>
+                    <p style="font-size: 0.7rem; color: var(--sand); margin: 0;">PNG, JPG up to 5MB</p>
+                </div>
+                <input type="file" id="addImageFile" accept="image/*" style="display: none;" onchange="updateFileName(this)">
+            </div>
         </div>
         
-        <button class="btn-primary" style="width: 100%; padding: 16px;" onclick="addProduct()">
+        <button class="btn-primary" style="width: 100%; padding: 14px; margin-top: 20px;" onclick="addProduct()">
             <i class="fas fa-save" style="margin-right: 8px;"></i> Save Product
         </button>
     </div>
 </div>
 
-<!-- Edit Product Modal (Improved) -->
+<!-- Edit Product Modal (Improved Layout) -->
 <div class="modal" id="editProductModal">
-    <div class="modal-box" style="max-width: 500px; padding: 45px;">
+    <div class="modal-box" style="max-width: 500px; padding: 30px;">
         <button class="modal-close" onclick="closeModal('editProductModal')">&times;</button>
-        <h3 style="font-size: 1.8rem; margin-bottom: 30px; text-align: center;">Edit Product</h3>
+        <h3 style="font-size: 1.6rem; margin-bottom: 20px; text-align: center; color: var(--walnut);">Edit Product</h3>
         
-        <div style="margin-bottom: 25px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Product Name</label>
-            <input type="text" id="editName" style="padding: 14px;">
+        <div style="display: flex; flex-direction: column; gap: 16px; max-height: calc(90vh - 120px); overflow-y: auto; padding-right: 5px;">
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Product Name</label>
+                <input type="text" id="editName" style="padding: 12px; margin-bottom: 0;">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Price (₱)</label>
+                    <input type="number" id="editPrice" style="padding: 12px; margin-bottom: 0;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Stock</label>
+                    <input type="number" id="editStock" style="padding: 12px; margin-bottom: 0;">
+                </div>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Product Image</label>
+                <div style="border: 2px dashed var(--sand); border-radius: 15px; padding: 20px; text-align: center; background: var(--cream); cursor: pointer;" onclick="document.getElementById('editImageFile').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: var(--primary); margin-bottom: 8px; display: block;"></i>
+                    <p style="color: var(--taupe); margin: 0 0 4px; font-size: 0.9rem;">Click to change image</p>
+                    <p style="font-size: 0.7rem; color: var(--sand); margin: 0;">PNG, JPG up to 5MB</p>
+                </div>
+                <input type="file" id="editImageFile" accept="image/*" style="display: none;" onchange="updateEditFileName(this)">
+                <div id="editFileNameDisplay" style="font-size: 0.8rem; color: var(--taupe); margin-top: 6px; text-align: center;"></div>
+            </div>
         </div>
         
-        <div style="margin-bottom: 25px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Price (₱)</label>
-            <input type="number" id="editPrice" style="padding: 14px;">
-        </div>
-        
-        <div style="margin-bottom: 30px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Stock</label>
-            <input type="number" id="editStock" style="padding: 14px;">
-        </div>
-        <div style="margin-bottom: 30px;">
-            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--walnut);">Image</label>
-            <input type="file" id="editImageFile" style="padding: 14px">
-        </div>
-        
-        <button class="btn-primary" style="width: 100%; padding: 16px;" onclick="saveProductEdit()">
+        <button class="btn-primary" style="width: 100%; padding: 14px; margin-top: 20px;" onclick="saveProductEdit()">
             <i class="fas fa-check" style="margin-right: 8px;"></i> Update Product
         </button>
     </div>
@@ -327,7 +346,6 @@
         </div>
     </div>
 </template>
-
 <template id="order-template">
     <div class="order-card-admin" style="background: white; border-radius: 25px; padding: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
@@ -344,6 +362,12 @@
                 <p class="order-note" style="font-size: 0.85rem; color: var(--taupe); background: var(--cream); padding: 5px 10px; border-radius: 8px; display: inline-block;"></p>
             </div>
         </div>
+
+        <div style="margin-bottom: 15px;">
+            <button class="view-design-btn" style="display:none; width: 100%; background: var(--walnut); color: white; border: none; padding: 12px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;">
+                <i class="fas fa-eye" style="margin-right: 8px;"></i> View Customize
+            </button>
+        </div>
         
         <div>
             <label style="display: block; margin-bottom: 10px; font-weight: 600; color: var(--walnut);">Update Status</label>
@@ -351,6 +375,37 @@
         </div>
     </div>
 </template>
+
+<div class="modal" id="adminPreviewModal" style="display:none; background: rgba(0,0,0,0.9);">
+    <div class="modal-box" style="max-width: 600px; padding: 0; overflow: hidden; border-radius: 20px; background: #1a1a1a;">
+        <button class="modal-close" onclick="closeModal('adminPreviewModal')" style="color: white; z-index: 100;">&times;</button>
+        
+        <div id="adminCanvas" style="position: relative; display: flex; align-items: center; justify-content: center; min-height: 500px; background: #222;">
+            <img id="adminPreviewImg" src="" style="max-width: 100%; max-height: 100%; pointer-events: none; user-select: none;">
+            
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="customerHistoryModal" style="display:none; background: rgba(0,0,0,0.6);">
+    <div class="modal-box" style="max-width: 600px; padding: 0; overflow: hidden; border-radius: 15px; background: #fdfbf9; max-height: 85vh; display: flex; flex-direction: column;">
+        
+        <div style="background: white; padding: 20px 25px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 id="historyModalTitle" style="margin: 0; font-family: 'Playfair Display'; color: var(--walnut);">Customer Order History</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: var(--taupe);">All previous and current orders</p>
+            </div>
+            <button onclick="closeModal('customerHistoryModal')" style="background: none; border: none; font-size: 1.5rem; color: var(--taupe); cursor: pointer;">&times;</button>
+        </div>
+
+        <div id="customerHistoryContainer" style="padding: 25px; overflow-y: auto; flex: 1;">
+            </div>
+        
+    </div>
+</div>
+
+
 <footer class="footer" style="margin-top: 50px;">
     <div class="footer-container">
         <div class="footer-col">

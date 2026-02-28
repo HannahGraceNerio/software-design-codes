@@ -1,3 +1,4 @@
+
 // --- FIREBASE IMPORTS ---
 import { auth, db } from "./firebase-config.js";
 import { 
@@ -179,16 +180,17 @@ window.toggleAuth = (type) => {
     }
 };
 
-window.togglePasswordVisibility = (inputId, iconElement) => {
-    const input = document.getElementById(inputId);
-    if (input.type === 'password') {
-        input.type = 'text';
-        iconElement.classList.remove('fa-eye');
-        iconElement.classList.add('fa-eye-slash');
-    } else {
-        input.type = 'password';
+window.togglePasswordVisibility = function(inputId, iconElement) {
+    const passwordInput = document.getElementById(inputId);
+    
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
         iconElement.classList.remove('fa-eye-slash');
         iconElement.classList.add('fa-eye');
+    } else {
+        passwordInput.type = 'password';
+        iconElement.classList.remove('fa-eye');
+        iconElement.classList.add('fa-eye-slash');
     }
 };
 // --- SOCIAL AUTHENTICATION ---
@@ -370,77 +372,128 @@ window.handleGuestWishlist = () => {
 window.toggleChat = () => {
     const body = document.getElementById('chat-body');
     const icon = document.getElementById('chat-icon');
+    const container = document.getElementById('chat-messages');
+
     if (body.style.display === 'none') {
         body.style.display = 'flex';
-        icon.className = 'fas fa-chevron-down'; // [cite: 50]
+        icon.className = 'fas fa-chevron-down';
+        
+        // If the chat is empty, load the greeting instantly!
+        if (container && container.innerHTML.trim() === "") {
+            loadGuestChat();
+        }
     } else {
         body.style.display = 'none';
-        icon.className = 'fas fa-chevron-up'; // [cite: 51]
+        icon.className = 'fas fa-chevron-up';
     }
 };
 
-window.sendMessage = async () => {
+window.sendMessage = () => {
     const input = document.getElementById('chatInput');
-    if (!input.value.trim() || !currentUser) return;
-
-    await addDoc(collection(db, "chats"), {
-        userId: currentUser.uid,
-        userEmail: currentUser.email,
-        text: input.value,
-        sender: "user",
-        timestamp: new Date()
-    }); // [cite: 55]
-    input.value = "";
-};
-
-document.addEventListener("DOMContentLoaded", renderProducts);
-
-// ==========================================
-// ADMIN NAVIGATION & CHAT INITIALIZATION
-// ==========================================
-
-// This variable ensures we only load the chat listeners once to prevent duplicate data
-let isChatLoaded = false; 
-
-window.showAdminSection = (sectionId) => {
-    // 1. Hide all sections
-    ['products', 'orders', 'admin-chat'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-    });
-
-    // 2. Show the clicked section
-    const target = document.getElementById(sectionId);
-    if (target) target.style.display = 'block';
-
-    // 3. Update the Navigation Bar styling
-    document.querySelectorAll('.nav-center a').forEach(a => {
-        a.classList.remove('active');
-        a.style.color = 'rgba(255,255,255,0.8)';
-    });
+    const messageText = input.value.trim();
     
-    const activeNav = document.getElementById('nav-' + sectionId);
-    if (activeNav) {
-        activeNav.classList.add('active');
-        activeNav.style.color = 'white';
-    }
+    if (!messageText) return;
 
-    // 4. CRITICAL FIX: Load the chat users ONLY when the admin opens the chat tab!
-    if (sectionId === 'admin-chat' && !isChatLoaded) {
-        console.log("Initializing Chat System...");
-        if (typeof loadChatUsers === "function") {
-            loadChatUsers(); 
-            isChatLoaded = true; // Mark as loaded so we don't duplicate listeners
-        } else {
-            console.error("loadChatUsers function is missing!");
-        }
-    }
+    input.value = ""; // Clear typing box
+
+    const container = document.getElementById('chat-messages');
+    if(!container) return;
+
+    // 1. Draw guest message on screen
+    const guestMsg = document.createElement('div');
+    guestMsg.className = `msg-wrapper user`;
+    guestMsg.innerHTML = `
+        <div class="msg user">${escapeHtml(messageText)}</div>
+        <div class="msg-time">Just now</div>
+    `;
+    container.appendChild(guestMsg);
+    container.scrollTop = container.scrollHeight;
+
+    // 2. Automated bot prompts them to log in
+    setTimeout(() => {
+        const botReply = document.createElement('div');
+        botReply.className = `msg-wrapper admin`;
+        botReply.innerHTML = `
+            <div class="msg admin" style="background: var(--cream); color: var(--walnut); border: 1px solid var(--border-light);">
+                <strong>Favored & Guided ✨</strong><br><br>
+                Thanks for reaching out! To connect with a real human and get help with your specific question, please log in or create an account.
+            </div>
+            <div class="msg-time" style="color: var(--taupe);">Automated</div>
+        `;
+        container.appendChild(botReply);
+        container.scrollTop = container.scrollHeight;
+    }, 600);
 };
 
-window.focusChatInput = () => {
-    const input = document.getElementById('adminChatInput');
-    if (input) {
-        input.disabled = false;
-        input.focus();
-    }
+function loadGuestChat() {
+    const container = document.getElementById('chat-messages');
+    if(!container) return;
+
+    container.innerHTML = ""; 
+    
+    const welcomeMsg = document.createElement('div');
+    welcomeMsg.className = `msg-wrapper admin`; 
+    
+    welcomeMsg.innerHTML = `
+        <div class="msg admin" style="background: var(--cream); color: var(--walnut); border: 1px solid var(--border-light);">
+            <strong>Favored & Guided ✨</strong><br><br>
+            Hi there! 👋 Welcome to our shop. How can we help you with your custom engraving today?
+        </div>
+        <div class="msg-time" style="color: var(--taupe);">Automated</div>
+    `;
+    container.appendChild(welcomeMsg);
+}
+
+
+function escapeHtml(unsafe) {
+    return (unsafe || "").toString()
+         .replace(/&/g, "&amp;")
+         .replace(/</g, "&lt;")
+         .replace(/>/g, "&gt;")
+         .replace(/"/g, "&quot;")
+         .replace(/'/g, "&#039;");
+}
+
+// --- NEW: AUTOMATED FAQ CHATBOT ---
+window.sendFAQ = (questionText, answerText) => {
+    const container = document.getElementById('chat-messages');
+    if(!container) return;
+
+    // 1. Draw the guest's question bubble
+    const guestMsg = document.createElement('div');
+    guestMsg.className = `msg-wrapper user`;
+    guestMsg.innerHTML = `
+        <div class="msg user">${escapeHtml(questionText)}</div>
+        <div class="msg-time">Just now</div>
+    `;
+    container.appendChild(guestMsg);
+    container.scrollTop = container.scrollHeight;
+
+    // 2. Draw the bot's answer bubble
+    setTimeout(() => {
+        const botReply = document.createElement('div');
+        botReply.className = `msg-wrapper admin`;
+        botReply.innerHTML = `
+            <div class="msg admin" style="background: var(--cream); color: var(--walnut); border: 1px solid var(--border-light);">
+                <strong>Favored & Guided ✨</strong><br><br>
+                ${answerText}
+            </div>
+            <div class="msg-time" style="color: var(--taupe);">Automated</div>
+        `;
+        container.appendChild(botReply);
+        container.scrollTop = container.scrollHeight;
+    }, 600);
 };
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderProducts(); // Keep your product render
+
+    const chatInput = document.getElementById('chatInput');
+    if (chatInput) {
+        chatInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                window.sendMessage();
+            }
+        });
+    }
+});

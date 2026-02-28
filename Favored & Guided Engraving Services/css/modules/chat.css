@@ -195,3 +195,48 @@
   margin-top: 2px;
   padding: 0 8px;
 }
+
+/* Prevent the image from blocking the drag */
+#studioImg {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+/* Ensure the text is on top and has a move cursor */
+#draggableEngraving {
+    z-index: 10;
+    cursor: move;
+    touch-action: none; /* Critical for mobile dragging */
+    user-select: none;
+}
+
+/* HORIZONTAL SCROLL FOR FAQ BUTTONS */
+.faq-scroll-container {
+    display: flex; 
+    gap: 8px; 
+    overflow-x: auto; 
+    padding: 12px 15px 15px 15px; /* Extra bottom padding for the scrollbar */
+    background: #fdfbf9; 
+    width: 100%; 
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch; /* Smooth swiping on mobile */
+    scroll-behavior: smooth;
+}
+
+/* Elegant, thin scrollbar for desktop users */
+.faq-scroll-container::-webkit-scrollbar {
+    height: 6px;
+}
+.faq-scroll-container::-webkit-scrollbar-track {
+    background: #f5f5f5;
+    border-radius: 10px;
+    margin: 0 15px; /* Keeps the scrollbar from touching the edges */
+}
+.faq-scroll-container::-webkit-scrollbar-thumb {
+    background: var(--sand, #d4c5b9); 
+    border-radius: 10px;
+}
+.faq-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: var(--taupe, #8b7d71);
+}

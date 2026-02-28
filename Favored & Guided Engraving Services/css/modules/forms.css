@@ -179,3 +179,33 @@ input[type="password"]::-webkit-strong-password-auto-fill-button {
     padding-right: 40px !important;
     margin-bottom: 0;
 }
+
+/* --- MODERN PASSWORD WRAPPER (For Change Password Form) --- */
+.password-wrapper-modern {
+    position: relative; 
+    width: 100%;
+}
+
+/* Make room inside the input box so text doesn't hit the eye icon */
+.password-wrapper-modern input {
+    width: 100%;
+    padding-right: 45px !important; 
+    box-sizing: border-box;
+    margin-bottom: 0; /* Keeps the spacing tight inside the wrapper */
+}
+
+/* Perfectly center the eye icon on the right side */
+.toggle-password-modern {
+    position: absolute;
+    right: 15px;       
+    top: 50%;          
+    transform: translateY(-50%); 
+    cursor: pointer;
+    color: var(--taupe); 
+    z-index: 2;
+    transition: color 0.2s ease;
+}
+
+.toggle-password-modern:hover {
+    color: var(--walnut); 
+}
