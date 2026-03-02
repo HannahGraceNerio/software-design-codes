@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin Dashboard | Favored & Guided</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/base.css" />
+</head>
+<body>
+
+<!-- Navbar -->
+<header class="navbar">
+    <div class="nav-left" style="display: flex; align-items: center;">
+        <img src="assets/logo.png" alt="Logo" style="width: 40px; height: 40px; border-radius: 10px; margin-right: 15px; background: white; padding: 5px;">
+        <span class="brand" style="color: white; font-size: 1.4rem;">Admin Dashboard</span>
+    </div>
+    <nav class="nav-center">
+        <a href="javascript:void(0)" onclick="showAdminSection('products')" class="active" id="nav-products" style="color: white;">Products</a>
+        <a href="javascript:void(0)" onclick="showAdminSection('orders')" id="nav-orders" style="color: rgba(255,255,255,0.8);">Orders</a>
+        <a href="javascript:void(0)" onclick="showAdminSection('admin-chat')" id="nav-admin-chat" style="color: rgba(255,255,255,0.8);">Messages</a>
+    </nav>
+    <div class="nav-right">
+        <button class="btn-primary" onclick="logoutAdmin()">
+            <i class="fas fa-sign-out-alt" style="margin-right: 8px;"></i> Log Out
+        </button>
+    </div>
+</header>
+
+<main class="section" style="padding-top: 40px;">
+
+    <!-- Dashboard Stats Cards -->
+    <div class="stats-grid" id="stats-container" style="display: grid;">
+        <div class="stat-card" style="background: white; padding: 25px; border-radius: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="color: var(--taupe); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Total Orders</p>
+                    <h3 style="font-size: 2.2rem; margin: 0; color: var(--walnut);" id="totalOrders">0</h3>
+                </div>
+                <div style="width: 55px; height: 55px; background: var(--cream); border-radius: 18px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-shopping-bag" style="color: var(--primary); font-size: 26px;"></i>
+                </div>
+            </div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-light);">
+                <span style="color: var(--primary); font-weight: 600;" id="orderGrowth">+12%</span>
+                <span style="color: var(--taupe); font-size: 0.9rem; margin-left: 8px;">from last month</span>
+            </div>
+        </div>
+        
+        <div class="stat-card" style="background: white; padding: 25px; border-radius: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="color: var(--taupe); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Pending</p>
+                    <h3 style="font-size: 2.2rem; margin: 0; color: #856404;" id="pendingOrders">0</h3>
+                </div>
+                <div style="width: 55px; height: 55px; background: #fff3cd; border-radius: 18px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-clock" style="color: #856404; font-size: 26px;"></i>
+                </div>
+            </div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-light);">
+                <span style="color: #856404; font-weight: 600;" id="pendingAlert">Needs attention</span>
+            </div>
+        </div>
+        
+        <div class="stat-card" style="background: white; padding: 25px; border-radius: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="color: var(--taupe); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Products</p>
+                    <h3 style="font-size: 2.2rem; margin: 0; color: var(--walnut);" id="totalProducts">0</h3>
+                </div>
+                <div style="width: 55px; height: 55px; background: var(--cream); border-radius: 18px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-box" style="color: var(--primary); font-size: 26px;"></i>
+                </div>
+            </div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-light);">
+                <span style="color: var(--primary); font-weight: 600;" id="lowStock">0 low stock</span>
+                <span style="color: var(--taupe); font-size: 0.9rem; margin-left: 8px;">items</span>
+            </div>
+        </div>
+        
+        <div class="stat-card" style="background: white; padding: 25px; border-radius: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft);">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <p style="color: var(--taupe); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Revenue</p>
+                    <h3 style="font-size: 2.2rem; margin: 0; color: #2e7d32;" id="totalRevenue">₱0.00</h3>
+                </div>
+                <div style="width: 55px; height: 55px; background: #d4edda; border-radius: 18px; display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-peso-sign" style="color: #2e7d32; font-size: 26px;"></i>
+                </div>
+            </div>
+            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-light);">
+                <span style="color: #2e7d32; font-weight: 600;" id="revenueMonth">This month</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <section id="products" style="display: block;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <div>
+                <h2 style="font-size: 2rem; margin-bottom: 5px;">Product Management</h2>
+                <p style="color: var(--taupe);">Manage your inventory and product details</p>
+            </div>
+            <button class="btn-primary" onclick="openModal('addProductModal')" style="padding: 14px 28px;">
+                <i class="fas fa-plus" style="margin-right: 8px;"></i> Add New Product
+            </button>
+        </div>
+        <div class="products-grid" id="adminProducts" style="gap: 30px;"></div>
+    </section>
+
+    <!-- Orders Section -->
+    <section id="orders" style="display: none;">
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 5px;">Customer Orders</h2>
+            <p style="color: var(--taupe);">Track and manage all customer orders</p>
+        </div>
+        
+        <div style="display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; align-items: center;">
+            <button class="filter-btn active" onclick="filterOrders('all')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: var(--primary); color: white; font-weight: 600;">All Orders</button>
+            <button class="filter-btn" onclick="filterOrders('pending')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">Pending</button>
+            <button class="filter-btn" onclick="filterOrders('preparing')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">Preparing</button>
+            <button class="filter-btn" onclick="filterOrders('ready')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">Ready</button>
+            <button class="filter-btn" onclick="filterOrders('completed')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">Completed</button>
+            <button class="filter-btn" onclick="filterOrders('cancelled')" style="padding: 10px 25px; border-radius: 30px; border: 1px solid #e74c3c; background: white; color: #e74c3c; font-weight: 600;">Cancelled</button>
+            
+            <div style="position: relative; display: inline-block;">
+                <button class="filter-btn" onclick="document.getElementById('adminDateFilter').showPicker()" id="adminDateFilterBtn" style="padding: 10px 25px; border-radius: 30px; border: 1px solid var(--sand); background: white; color: var(--text-body);">
+                    <i class="fas fa-calendar-alt"></i> Date
+                </button>
+                <input type="date" id="adminDateFilter" onchange="filterAdminByDate(this.value)" 
+                    style="position: absolute; opacity: 0; pointer-events: none; left: 0; bottom: 0; width: 0;">
+            </div>
+        </div>
+        
+        <div class="order-grid" id="admin-orders-container" style="gap: 20px;"></div>
+    </section>
+
+    <!-- Chat Section -->
+    <section id="admin-chat" style="display: none;">
+        <div style="margin-bottom: 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 5px;">Customer Support Hub</h2>
+            <p style="color: var(--taupe);">Chat with customers and resolve inquiries</p>
+        </div>
+        
+        <div class="chat-container-admin">
+            <!-- User List Sidebar -->
+            <div class="chat-users-sidebar">
+                <div class="chat-users-header">
+                    <h3>Active Conversations</h3>
+                    <input type="text" id="userSearch" placeholder="Search customers..." />
+                    <div class="quick-actions">
+                        <button class="quick-action-btn" onclick="filterChatUsers('all')">
+                            <i class="fas fa-users"></i> All
+                        </button>
+                        <button class="quick-action-btn" onclick="filterChatUsers('unread')">
+                            <i class="fas fa-envelope"></i> Unread
+                        </button>
+                        <button class="quick-action-btn" onclick="filterChatUsers('online')">
+                            <i class="fas fa-circle" style="color: #2ecc71;"></i> Online
+                        </button>
+                    </div>
+                </div>
+                <div class="chat-users-list" id="adminChatUserList"></div>
+            </div>
+            
+            <!-- Main Chat Area -->
+            <div class="chat-main">
+                    <div class="chat-header-area">
+                        <div class="selected-user-info">
+                            <button class="mobile-back-btn" onclick="backToChatList()">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <div class="selected-user-avatar" id="selectedUserAvatar">A</div>
+                            <div class="selected-user-details">
+                                <h4 id="selectedCustomerName">Select a conversation</h4>
+                            <div class="user-status">
+                                <span class="status-dot"></span>
+                                <span id="customerStatus">Offline</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="btn-icon" onclick="toggleCustomerInfo()" title="Customer Info">
+                            <i class="fas fa-user-circle"></i>
+                        </button>
+                        <button class="btn-icon" onclick="refreshChat()" title="Refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Customer Info Panel (Expandable) -->
+                <div class="customer-info-panel" id="customerInfoPanel">
+                    <div class="customer-info-header">
+                        <h4>Customer Information</h4>
+                        <button class="btn-icon" onclick="toggleCustomerInfo()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="customer-details-grid">
+                        <div class="detail-item">
+                            <div class="detail-label">Full Name</div>
+                            <div class="detail-value" id="infoName">Loading...</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value" id="infoEmail">Loading...</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Phone</div>
+                            <div class="detail-value" id="infoPhone">Loading...</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Total Orders</div>
+                            <div class="detail-value" id="infoOrders">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="customer-orders-preview" id="customerOrdersPreview">
+                        <h5 style="margin-bottom: 15px;">Recent Orders</h5>
+                        <div id="recentOrdersList"></div>
+                    </div>
+                    
+                    <button class="btn-outline" onclick="loadFullCustomerHistory()" style="width: 100%; margin-top: 15px;">
+                        View Full History
+                    </button>
+                </div>
+                
+                <!-- Messages Area -->
+                <div class="chat-messages-area" id="adminChatMessages"></div>
+                
+                <!-- Chat Input Area -->
+                <div class="chat-input-area">
+                    <div class="chat-input-wrapper">
+                        <input type="text" id="adminChatInput" placeholder="Type your reply here..." />
+                        <button class="btn-send" onclick="sendAdminMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        <input type="file" id="adminChatImageInput" accept="image/*" style="display: none;" onchange="sendBase64Image(event)">
+                        <button onclick="document.getElementById('adminChatImageInput').click()" class="btn-attach">
+                            <i class="fas fa-paperclip"></i>
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 8px; font-size: 0.8rem; color: var(--taupe);">
+                        <span><i class="fas fa-enter"></i> Enter to send</span>
+                        <span><i class="fas fa-user-circle"></i> Esc to clear</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Add Product Modal (Improved Layout) -->
+<div class="modal" id="addProductModal">
+    <div class="modal-box" style="max-width: 500px; padding: 30px;">
+        <button class="modal-close" onclick="closeModal('addProductModal')">&times;</button>
+        <h3 style="font-size: 1.6rem; margin-bottom: 20px; text-align: center; color: var(--walnut);">Add New Product</h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 16px; max-height: calc(90vh - 120px); overflow-y: auto; padding-right: 5px;">
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Product Name</label>
+                <input type="text" id="addName" placeholder="e.g., Wooden Cross Engraving" style="padding: 12px; margin-bottom: 0;" />
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Price (₱)</label>
+                    <input type="number" id="addPrice" placeholder="0.00" min="0" step="0.01" style="padding: 12px; margin-bottom: 0;" />
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Initial Stock</label>
+                    <input type="number" id="addStock" value="10" min="0" style="padding: 12px; margin-bottom: 0;" />
+                </div>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Product Image</label>
+                <div style="border: 2px dashed var(--sand); border-radius: 15px; padding: 20px; text-align: center; background: var(--cream); cursor: pointer;" onclick="document.getElementById('addImageFile').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: var(--primary); margin-bottom: 8px; display: block;"></i>
+                    <p style="color: var(--taupe); margin: 0 0 4px; font-size: 0.9rem;">Click to upload</p>
+                    <p style="font-size: 0.7rem; color: var(--sand); margin: 0;">PNG, JPG up to 5MB</p>
+                </div>
+                <input type="file" id="addImageFile" accept="image/*" style="display: none;" onchange="updateFileName(this)">
+            </div>
+        </div>
+        
+        <button class="btn-primary" style="width: 100%; padding: 14px; margin-top: 20px;" onclick="addProduct()">
+            <i class="fas fa-save" style="margin-right: 8px;"></i> Save Product
+        </button>
+    </div>
+</div>
+
+<!-- Edit Product Modal (Improved Layout) -->
+<div class="modal" id="editProductModal">
+    <div class="modal-box" style="max-width: 500px; padding: 30px;">
+        <button class="modal-close" onclick="closeModal('editProductModal')">&times;</button>
+        <h3 style="font-size: 1.6rem; margin-bottom: 20px; text-align: center; color: var(--walnut);">Edit Product</h3>
+        
+        <div style="display: flex; flex-direction: column; gap: 16px; max-height: calc(90vh - 120px); overflow-y: auto; padding-right: 5px;">
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Product Name</label>
+                <input type="text" id="editName" style="padding: 12px; margin-bottom: 0;">
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Price (₱)</label>
+                    <input type="number" id="editPrice" style="padding: 12px; margin-bottom: 0;">
+                </div>
+                
+                <div>
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Stock</label>
+                    <input type="number" id="editStock" style="padding: 12px; margin-bottom: 0;">
+                </div>
+            </div>
+            
+            <div>
+                <label style="display: block; margin-bottom: 6px; font-weight: 600; color: var(--walnut); font-size: 0.9rem;">Product Image</label>
+                <div style="border: 2px dashed var(--sand); border-radius: 15px; padding: 20px; text-align: center; background: var(--cream); cursor: pointer;" onclick="document.getElementById('editImageFile').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: var(--primary); margin-bottom: 8px; display: block;"></i>
+                    <p style="color: var(--taupe); margin: 0 0 4px; font-size: 0.9rem;">Click to change image</p>
+                    <p style="font-size: 0.7rem; color: var(--sand); margin: 0;">PNG, JPG up to 5MB</p>
+                </div>
+                <input type="file" id="editImageFile" accept="image/*" style="display: none;" onchange="updateEditFileName(this)">
+                <div id="editFileNameDisplay" style="font-size: 0.8rem; color: var(--taupe); margin-top: 6px; text-align: center;"></div>
+            </div>
+        </div>
+        
+        <button class="btn-primary" style="width: 100%; padding: 14px; margin-top: 20px;" onclick="saveProductEdit()">
+            <i class="fas fa-check" style="margin-right: 8px;"></i> Update Product
+        </button>
+    </div>
+</div>
+
+<!-- Templates (Keep as is) -->
+<template id="product-template">
+    <div class="product-card" style="position: relative;">
+        <img class="p-img" src="" style="width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 20px;">
+        <h3 class="p-name" style="margin: 15px 0 5px;"></h3>
+        <p class="p-price" style="font-size: 1.3rem; color: var(--primary); font-weight: 700;"></p>
+        <p class="p-stock" style="font-size: 0.9rem; margin-bottom: 15px;"></p>
+        
+        <div style="display: flex; gap: 8px; margin-bottom: 10px;">
+            <button class="btn-outline btn-plus" style="flex: 1; padding: 10px;">+ Add Stock</button>
+            <button class="btn-outline btn-minus" style="flex: 1; padding: 10px;">- Remove</button>
+        </div>
+        
+        <div style="display: flex; gap: 8px;">
+            <button class="btn-primary btn-edit" style="flex: 1; padding: 10px; background: var(--golden);">Edit</button>
+            <button class="btn-outline btn-delete" style="flex: 1; padding: 10px; color: #e53935; border-color: #ffcdd2;">Delete</button>
+        </div>
+    </div>
+</template>
+
+<template id="order-template">
+    <div class="order-card-admin" style="background: white; border-radius: 25px; padding: 25px; border: 1px solid var(--sand); box-shadow: var(--shadow-soft); display: flex; flex-direction: column; height: 100%;">
+        
+        <div style="flex: 1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <span class="order-id" style="background: var(--cream); padding: 5px 15px; border-radius: 30px; font-weight: 700; color: var(--primary);"></span>
+                <span class="order-date" style="color: var(--taupe); font-size: 0.85rem;"></span>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--border-light);">
+                <img class="order-img" src="" style="width: 80px; height: 80px; border-radius: 15px; object-fit: cover;">
+                <div style="flex: 1;">
+                    <h4 class="order-product-name" style="margin: 0 0 5px;"></h4>
+                    <p class="order-email" style="font-size: 0.85rem; color: var(--taupe); margin: 2px 0;"></p>
+                    <p class="order-total" style="font-weight: 700; color: var(--primary); margin: 5px 0;"></p>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: auto;">
+            <div style="margin-bottom: 15px;">
+                <button class="view-design-btn" style="display:none; width: 100%; background: var(--walnut); color: white; border: none; padding: 12px; border-radius: 30px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;">
+                    <i class="fas fa-eye" style="margin-right: 8px;"></i> View Customize
+                </button>
+            </div>
+            
+            <div style="position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <label style="font-weight: 600; color: var(--walnut); margin: 0;">Update Status</label>
+                    
+                    <div class="cancel-popover-wrapper" style="display: none; position: relative;">
+                        <button class="view-cancel-btn" style="background: none; color: #c62828; border: none; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; transition: all 0.2s;">
+                            <i class="fas fa-info-circle" style="margin-right: 5px;"></i> Reason
+                        </button>
+                        
+                        <div class="cancel-reason-menu" style="display: none; position: absolute; bottom: calc(100% + 10px); right: 0; width: 220px; background: white; border: 1px solid #e74c3c; border-radius: 12px; padding: 15px; box-shadow: 0 10px 25px rgba(231, 76, 60, 0.2); z-index: 100;">
+                            <div style="font-weight: 600; color: var(--walnut); margin-bottom: 5px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">Customer Reason:</div>
+                            <div class="cancel-reason-text" style="color: #c62828; font-size: 0.9rem; line-height: 1.4; white-space: normal;"></div>
+                            <div style="position: absolute; bottom: -6px; right: 20px; transform: rotate(45deg); width: 10px; height: 10px; background: white; border-right: 1px solid #e74c3c; border-bottom: 1px solid #e74c3c;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <select class="status-select" style="width: 100%; padding: 12px; border-radius: 30px; border: 1px solid var(--sand);"></select>
+            </div>
+            
+        </div>
+    </div>
+</template>
+
+<div class="modal" id="adminPreviewModal" style="display:none; background: rgba(0,0,0,0.9);">
+    <div class="modal-box" style="max-width: 600px; padding: 0; overflow: hidden; border-radius: 20px; background: #1a1a1a;">
+        <button class="modal-close" onclick="closeModal('adminPreviewModal')" style="color: white; z-index: 100;">&times;</button>
+        
+        <div id="adminCanvas" style="position: relative; display: flex; align-items: center; justify-content: center; min-height: 500px; background: #222;">
+            <img id="adminPreviewImg" src="" style="max-width: 100%; max-height: 100%; pointer-events: none; user-select: none;">
+            
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="customerHistoryModal" style="display:none; background: rgba(0,0,0,0.6);">
+    <div class="modal-box" style="max-width: 600px; padding: 0; overflow: hidden; border-radius: 15px; background: #fdfbf9; max-height: 85vh; display: flex; flex-direction: column;">
+        
+        <div style="background: white; padding: 20px 25px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 id="historyModalTitle" style="margin: 0; font-family: 'Playfair Display'; color: var(--walnut);">Customer Order History</h3>
+                <p style="margin: 0; font-size: 0.85rem; color: var(--taupe);">All previous and current orders</p>
+            </div>
+            <button onclick="closeModal('customerHistoryModal')" style="background: none; border: none; font-size: 1.5rem; color: var(--taupe); cursor: pointer;">&times;</button>
+        </div>
+
+        <div id="customerHistoryContainer" style="padding: 25px; overflow-y: auto; flex: 1;">
+            </div>
+        
+    </div>
+</div>
+
+
+<footer class="footer" style="margin-top: 50px;">
+    <div class="footer-container">
+        <div class="footer-col">
+            <h3>Favored & Guided</h3>
+            <p>Admin Dashboard - Managing faith-inspired wooden engravings with care and precision.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+            </div>
+        </div>
+        
+        <div class="footer-col">
+            <h4>Admin Links</h4>
+            <ul>
+                <li><a href="javascript:void(0)" onclick="showAdminSection('products')">Products</a></li>
+                <li><a href="javascript:void(0)" onclick="showAdminSection('orders')">Orders</a></li>
+                <li><a href="javascript:void(0)" onclick="showAdminSection('admin-chat')">Messages</a></li>
+                <li><a href="/">View Site</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-col">
+            <h4>System Info</h4>
+            <p><i class="fas fa-database"></i> v2.0.1</p>
+            <p><i class="fas fa-clock"></i> Last updated: 2026</p>
+            <p><i class="fas fa-shield-alt"></i> Secure Admin Panel</p>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2026 Favored & Guided Engraving. Admin Dashboard v2.0</p>
+    </div>
+</footer>
+<script type="module" src="admin.js"></script>
+</body>
+</html>

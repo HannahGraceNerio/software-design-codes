@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>My Account | Favored & Guided Engraving</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="css/base.css" />
+</head>
+<body>
+
+<header class="navbar">
+    <div class="nav-left" style="display: flex; align-items: center;">
+        <img src="assets/logo.png" alt="Favored & Guided" class="logo" style="width: 45px; height: 45px; object-fit: contain; margin-right: 12px;" />
+        <div style="display: flex; flex-direction: column; line-height: 1.2;">
+            <span class="brand" style="font-size: 1.4rem; margin-left: 0;">Favored & Guided</span>
+            <small style="font-size: 0.7rem; color: var(--taupe); letter-spacing: 1px;">FAITH-INSPIRED ENGRAVING</small>
+        </div>
+    </div>
+
+    <nav class="nav-center">
+        <a href="javascript:void(0)" onclick="showSection('hero')" class="active" id="nav-hero">Home</a>
+        <a href="javascript:void(0)" onclick="showSection('products')" id="nav-products">Product</a>
+        <a href="javascript:void(0)" onclick="showSection('about')" id="nav-about">About us</a>
+    </nav>
+
+    <div class="nav-right">
+        <div class="user-menu-dropdown">
+            <button class="btn-primary dropdown-toggle">
+                <i class="fas fa-user-circle"></i> 
+                <span id="userNameDisplay">Account</span> 
+                <i class="fas fa-caret-down"></i>
+            </button>
+            <div class="dropdown-content">
+                <a href="javascript:void(0)" onclick="showSection('account')">
+                    <i class="fas fa-user-edit"></i> Profile Settings
+                </a>
+                <a href="javascript:void(0)" onclick="showSection('order')">
+                    <i class="fas fa-shopping-bag"></i> My Orders
+                </a>
+                <a href="javascript:void(0)" onclick="showSection('wishlist')" id='nav-wishlist'>
+                    <i class="fas fa-heart"></i> Wishlist
+                </a>
+                <a href="javascript:void(0)" onclick="showSection('change-password')">
+                    <i class="fas fa-key"></i> Change Password
+                </a>
+                <hr>
+                <a href="javascript:void(0)" onclick="logoutUser()" class="logout-link">
+                    <i class="fas fa-sign-out-alt"></i> Log Out
+                </a>    
+            </div>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section id="hero" class="section" style="min-height: 60vh; display: flex; align-items: center; justify-content: center;">
+        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; max-width: 1300px; margin: 0 auto; padding: 0 6%;">
+            
+            <!-- Left side - Welcome text (centered) -->
+            <div class="hero-content" style="flex: 1; max-width: 600px; text-align: center; margin: 0 auto;">
+                <span class="badge" style="margin-bottom: 0px; display: inline-block;">WELCOME BACK</span>
+                <h1 style="font-size: clamp(2.5rem, 4vw, 3.5rem); line-height: 1.2; margin-bottom: 15px; color: var(--walnut);">
+                    Peace be with you,<br><span id="welcomeName" style="color: var(--primary);"></span>
+                </h1>
+                <p style="font-size: 1.1rem; color: var(--text-muted); margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                    Your spiritual journey continues. Explore our latest faith-inspired collections and handcrafted engravings.
+                </p>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button class="btn-primary" onclick="showSection('products')" style="padding: 12px 28px;">
+                        <i class="fas fa-search" style="margin-right: 8px;"></i> Browse Shop
+                    </button>
+                    <button class="btn-outline" onclick="showSection('order')" style="padding: 12px 28px; background: white;">
+                        <i class="fas fa-shopping-bag" style="margin-right: 8px;"></i> My Orders
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Right side - Image card (smaller for logged in users) -->
+            <div class="hero-image" style="flex: 0.8; max-width: 350px; margin-left: 40px;">
+                <div style="background: white; padding: 15px; border-radius: 25px; box-shadow: var(--shadow-soft); border: 1px solid var(--sand);">
+                    <img src="assets/hero-engraving.png" alt="Handcrafted Wood Engraving" style="width: 100%; border-radius: 15px; display: block;">
+                    <div style="padding: 10px 0 0; text-align: center;">
+                        <p style="font-weight: 600; color: var(--walnut); margin-bottom: 2px;">New Arrivals</p>
+                        <p style="color: var(--primary); font-size: 0.85rem;">Faith Collection</p>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </section>
+
+    <section id="products" class="section" style="display:none;">
+        <div style="text-align: center; margin-bottom: 50px;">
+            <h2 class="section-title">Shop Collection</h2>
+        </div>
+        <div class="products-grid" id="products-container"></div>
+    </section>
+
+
+    <section id="account" class="section" style="display:none;">
+        <div class="profile-overview">
+            <div class="profile-header">
+                <div class="profile-avatar" id="profileAvatar">U</div>
+                <div class="profile-title">
+                    <h3>Profile Settings</h3>
+                    <p>Manage your personal information</p>
+                </div>
+            </div>
+            
+            <div class="profile-details">
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Full Name</div>
+                        <div class="detail-value" id="accountFullname">Loading...</div>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Email Address</div>
+                        <div class="detail-value" id="accountEmail">Loading...</div>
+                    </div>
+                </div>
+                
+                <div class="profile-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Phone Number</div>
+                        <div class="detail-value" id="accountPhone">Not Set</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-actions">
+                <button class="btn-primary" onclick="showSection('edit-details')">
+                    <i class="fas fa-edit"></i> Edit Profile
+                </button>
+                <button class="btn-outline" onclick="showSection('change-password')">
+                    <i class="fas fa-key"></i> Change Password
+                </button>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="order" class="section" style="display:none;">
+        <div class="section-header">
+            <h2 class="section-title">My Orders</h2>
+            <p class="section-sub">Track and manage your engraved items</p>
+        </div>
+        
+        <!-- Order Stats Summary -->
+        <div class="stats-grid" id="order-stats"></div>
+        
+        <!-- Order Filters -->
+        <div class="filter-group" id="order-filters">
+            <button class="filter-btn active" onclick="filterUserOrders('all')">All Orders</button>
+            <button class="filter-btn" onclick="filterUserOrders('pending')">Pending</button>
+            <button class="filter-btn" onclick="filterUserOrders('preparing')">Preparing</button>
+            <button class="filter-btn" onclick="filterUserOrders('ready')">Ready for Pickup</button>
+            <button class="filter-btn" onclick="filterUserOrders('completed')">Completed</button>
+
+            <div style="position: relative; display: inline-block;">
+                <button class="filter-btn" onclick="document.getElementById('userDateFilter').showPicker()" id="dateFilterBtn">
+                    <i class="fas fa-calendar-alt"></i> Date
+                </button>
+                <input type="date" id="userDateFilter" onchange="filterUserBySpecificDate(this.value)" 
+                       style="position: absolute; opacity: 0; pointer-events: none; left: 0; bottom: 0; width: 0;">
+            </div>
+        </div>
+        
+        <!-- Orders Container -->
+        <div class="order-grid" id="order-container"></div>
+    </section>
+
+    <section id="wishlist" class="section" style="display:none;">
+        <!-- Enhanced Wishlist Header -->
+        <div class="wishlist-header">
+            <div class="wishlist-title-section">
+                <h2>My Wishlist</h2>
+            </div>
+            <div class="wishlist-stats">
+                <div class="wishlist-stats-item">
+                    <i class="fas fa-heart"></i>
+                    <span id="wishlist-count">0</span> items
+                </div>
+                <div class="wishlist-stats-item">
+                    <i class="fas fa-tag"></i>
+                    <span id="wishlist-total">₱0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wishlist Actions Bar -->
+        <div class="wishlist-actions">
+            <div class="wishlist-filters">
+                <button class="wishlist-filter-btn active" onclick="filterWishlist('all')">All Items</button>
+                <button class="wishlist-filter-btn" onclick="filterWishlist('in-stock')">In Stock</button>
+                <button class="wishlist-filter-btn" onclick="filterWishlist('low-stock')">Low Stock</button>
+            </div>
+        </div>
+
+
+        <!-- Wishlist Items Grid -->
+        <div class="products-grid" id="wishlist-container"></div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="section" style="display:none;">
+        <div class="about-section">
+            <!-- Mission Statement Card -->
+            <div class="mission-card">
+                <div class="mission-icon">
+                    <i class="fas fa-feather-alt"></i>
+                </div>
+                <h2>Crafted with Faith, Made with Love</h2>
+                <p>Every piece we create carries a message of hope, faith, and inspiration. Our mission is to provide beautifully handcrafted wooden engravings that serve as daily reminders of God's love and guidance in your life.</p>
+            </div>
+
+            <!-- Three Column Grid -->
+            <div class="about-grid">
+                <!-- Contact Info Card -->
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-phone-alt"></i>
+                    </div>
+                    <h3>Contact Info</h3>
+                    
+                    <div class="contact-detail">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-label">Email</div>
+                            <div class="contact-value">favoredandguided@gmail.com</div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-detail">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="contact-info">
+                            <div class="contact-label">Phone</div>
+                            <div class="contact-value">0994 740 8423</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Socials Card - UPDATED WITH CLICKABLE LINKS -->
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3>Connect With Us</h3>
+                    
+                    <a href="https://www.facebook.com/share/1WW7Pui3dx/?mibextid=wwXIfr" target="_blank" style="text-decoration: none;">
+                        <div class="contact-detail" style="cursor: pointer;">
+                            <div class="contact-icon">
+                                <i class="fab fa-facebook-f"></i>
+                            </div>
+                            <div class="contact-info">
+                                <div class="contact-label">Facebook</div>
+                                <div class="contact-value">/favoredandguided</div>
+                            </div>
+                        </div>
+                    </a>
+                    
+                    <a href="https://www.tiktok.com/@favored.and.guide?_r=1&_t=ZS-930UZrGRYkK" target="_blank" style="text-decoration: none;">
+                        <div class="contact-detail" style="cursor: pointer;">
+                            <div class="contact-icon">
+                                <i class="fab fa-tiktok"></i>
+                            </div>
+                            <div class="contact-info">
+                                <div class="contact-label">Tiktok</div>
+                                <div class="contact-value">@favoredandguided</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+                <!-- Open Hours Card -->
+                <div class="about-card">
+                    <div class="card-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>Open Hours</h3>
+                    
+                    <div class="hours-list">
+                        <div class="hours-item">
+                            <span class="hours-day">Order Anytime</span>
+                            <span class="hours-time">24/7 Online</span>
+                        </div>
+                        
+                        <div class="hours-item">
+                            <span class="hours-day">Customer Support</span>
+                            <span class="hours-time">9:00 AM - 6:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Edit Details Section - Redesigned -->
+    <section id="edit-details" class="section" style="display:none;">
+        <div class="edit-profile-card">
+            <div class="edit-profile-header">
+                <h3>Edit Profile</h3>
+                <p>Update your personal information</p>
+            </div>
+            
+            <form id="editDetailsForm">
+                <div class="edit-form-group">
+                    <label for="editFullname">Full Name</label>
+                    <input type="text" id="editFullname" placeholder="Enter your full name" required>
+                </div>
+                
+                <div class="edit-form-group">
+                    <label for="editPhone">Phone Number</label>
+                    <input type="tel" id="editPhone" placeholder="Enter your phone number" required>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 16px; margin-top: 10px;">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Change Password Section - Redesigned -->
+    <section id="change-password" class="section" style="display:none;">
+        <div class="change-password-card">
+            <div class="password-header">
+                <h3>Change Password</h3>
+                <p>Choose a strong password to keep your account secure</p>
+            </div>
+            
+            <form id="changePasswordForm">
+                <div class="password-form-group">
+                    <label for="newPassword">New Password</label>
+                    <div class="password-wrapper-modern">
+                        <input type="password" id="newPassword" placeholder="Enter new password" required minlength="8">
+                        <i class="far fa-eye-slash toggle-password-modern" onclick="togglePasswordModern('newPassword', this)"></i>
+                    </div>
+                    <div class="password-hint" id="newPasswordHint">
+                        <i class="fas fa-info-circle"></i>
+                        Minimum 8 characters
+                    </div>
+                </div>
+                
+                <div class="password-form-group">
+                    <label for="confirmNewPassword">Confirm Password</label>
+                    <div class="password-wrapper-modern">
+                        <input type="password" id="confirmNewPassword" placeholder="Confirm new password" required minlength="8">
+                        <i class="far fa-eye-slash toggle-password-modern" onclick="togglePasswordModern('confirmNewPassword', this)"></i>
+                    </div>
+                    <div class="password-hint" id="confirmPasswordHint">
+                        <i class="fas fa-info-circle"></i>
+                        Passwords must match
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 16px; margin-top: 10px;">
+                    <i class="fas fa-lock"></i> Update Password
+                </button>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-col">
+            <h3>Favored & Guided</h3>
+            <p>Crafting faith-inspired wooden engravings that speak to your soul. Each piece is lovingly handcrafted with attention to detail and spiritual meaning.</p>
+            <div class="social-links">
+                <a href="https://www.facebook.com/share/1WW7Pui3dx/?mibextid=wwXIfr" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.tiktok.com/@favored.and.guide?_r=1&_t=ZS-930UZrGRYkK" aria-label="Tiktok"><i class="fab fa-tiktok"></i></a>
+            </div>
+        </div>
+        
+        <div class="footer-col">
+            <h4>Explore</h4>
+            <ul>
+                <li><a href="javascript:void(0)" onclick="showSection('hero')">Home</a></li>
+                <li><a href="javascript:void(0)" onclick="showSection('products')">Our Collection</a></li>
+                <li><a href="javascript:void(0)" onclick="showSection('about')">Our Story</a></li>
+            </ul>
+        </div>
+        
+        <div class="footer-col">
+            <h4>Connect With Us</h4>
+            <p><i class="fas fa-phone-alt"></i> 0994 740 8423</p>
+            <p><i class="fas fa-envelope"></i> favoredandguided@gmail.com</p>
+            <p><i class="fas fa-clock"></i> Order Online: 24/7</p>
+            <p><i class="fas fa-headset"></i> Support: 9AM - 6PM</p>
+        </div>
+    </div>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2026 Favored & Guided Engraving. All rights reserved. | Crafted with faith and love</p>
+    </div>
+</footer>
+
+<div id="chat-container" class="chat-container">
+    <div class="chat-header" onclick="toggleChat()">
+        <span><i class="fas fa-comment-dots"></i> Support</span>
+        <i class="fas fa-chevron-up" id="chat-icon"></i>
+    </div>
+    <div id="chat-body" class="chat-body" style="display: none;">
+        <div id="chat-messages" class="chat-messages"></div>
+        
+        <div onclick="toggleFAQ()" style="background: #fdfbf9; border-top: 1px solid var(--border-light); padding: 6px 15px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--taupe); font-weight: 600;">
+            <span><i class="fas fa-lightbulb" style="color: #f39c12; margin-right: 5px;"></i> Quick Questions</span>
+            <i class="fas fa-chevron-down" id="faq-icon"></i>
+        </div>
+
+        <div id="faq-buttons-container" class="faq-scroll-container">
+            <button onclick="sendFAQ('What materials do you engrave?', 'We specialize in engraving notebook, pen, utensils, keychain, mirror, and coaster. Check our product catalog!')" 
+                    style="background: white; border: 1px solid var(--primary); color: var(--primary); padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 600; flex-shrink: 0; white-space: nowrap; transition: all 0.2s;">
+                🔨 Materials?
+            </button>       
+            
+            <button onclick="sendFAQ('Can I request a custom design?', 'Absolutely! You can type your preferred font and instructions when placing an order.')" 
+                    style="background: white; border: 1px solid var(--primary); color: var(--primary); padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 600; flex-shrink: 0; white-space: nowrap; transition: all 0.2s;">
+                🎨 Custom Design?
+            </button>   
+            
+            <button onclick="sendFAQ('How do I track my order?', 'You can view the real-time status of your order in the My Orders tab on your profile!')" 
+                    style="background: white; border: 1px solid var(--primary); color: var(--primary); padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 600; flex-shrink: 0; white-space: nowrap; transition: all 0.2s;">
+                📍 Track Order
+            </button>
+            <button onclick="sendFAQ('How do I cancel my order?', 'You can cancel your order by going to your profiles My Orders tab! You can only cancel the order while it is still pending.')" 
+                    style="background: white; border: 1px solid var(--primary); color: var(--primary); padding: 8px 14px; border-radius: 20px; cursor: pointer; font-size: 0.75rem; font-weight: 600; flex-shrink: 0; white-space: nowrap; transition: all  0.2s;">
+                ❌ Cancel Order
+            </button>
+        </div>
+
+        <div class="chat-input">
+            <input type="text" id="chatInput" placeholder="Type a message...">
+            <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+            <input type="file" id="chatImageInput" accept="image/*" style="display: none;" onchange="sendBase64Image(event)">
+            <button onclick="document.getElementById('chatImageInput').click()" style="background: none; border: none; color: var(--taupe); cursor: pointer; font-size: 1.2rem; padding: 5px; transition: color 0.2s;">
+                <i class="fas fa-paperclip"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="productDetailsModal">
+    <div class="modal-box" style="max-width: 850px; width: 95%;">
+        <button class="modal-close" onclick="closeModal('productDetailsModal')">&times;</button>      
+        <div style="display: flex; flex-wrap: wrap; gap: 30px; padding: 20px; align-items: start;">
+            <div style="flex: 1; min-width: 300px;">
+                <img id="detailImg" src="" style="width: 100%; border-radius: 15px; display: block; object-fit: cover; box-shadow: var(--shadow-soft);">
+            </div>  
+            <div style="flex: 1.2; min-width: 300px; text-align: left; display: flex; flex-direction: column;">
+                <h2 id="detailName" style="font-family: 'Playfair Display', serif; color: var(--walnut); margin-top: 0; font-size: 1.8rem;"></h2> 
+                <p id="detailPrice" class="price" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 10px; font-weight: bold;"></p>
+                <p id="detailStock" style="font-size: 0.85rem; color: var(--taupe); margin-bottom: 15px; font-weight: 600;"></p>
+                <p id="detailDesc" style="color: var(--text-body); margin-bottom: 25px; line-height: 1.6; font-size: 0.95rem;"></p>
+                
+                <button id="personalizeBtn" class="btn-primary" onclick="openDesignStudio()" style="width: 100%; padding: 15px; background: var(--walnut); margin-bottom: 25px; border-radius: 8px;">
+                    <i class="fas fa-magic"></i> Customize & Design
+                </button>
+                
+                <div style="display: flex; align-items: center; justify-content: space-between; margin: 0 0 25px 0; padding: 12px 20px; background: var(--cream); border-radius: 8px; border: 1px solid var(--border-light); width: 100%; box-sizing: border-box;">
+                    
+                    <span style="font-weight: bold; font-size: 0.9rem; color: var(--walnut); letter-spacing: 1px; text-transform: uppercase;">Quantity:</span>
+                    
+                    <div style="display: flex; align-items: stretch; height: 38px; background: white; border: 1px solid var(--sand); border-radius: 6px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.02);">
+                        
+                        <button type="button" onclick="document.getElementById('orderQty').stepDown()" style="background: #fdfbf9; border: none; border-right: 1px solid var(--sand); width: 40px; padding: 0; cursor: pointer; color: var(--walnut); font-size: 1rem; transition: background 0.2s; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.background='#f0eae1'" onmouseout="this.style.background='#fdfbf9'">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        
+                        <input type="number" id="orderQty" value="1" min="1" style="width: 50px; border: none; text-align: center; font-weight: bold; font-size: 1.1rem; color: var(--walnut); padding: 0; margin: 0; outline: none; background: transparent; line-height: 38px;">
+                        
+                        <button type="button" onclick="document.getElementById('orderQty').stepUp()" style="background: #fdfbf9; border: none; border-left: 1px solid var(--sand); width: 40px; padding: 0; cursor: pointer; color: var(--walnut); font-size: 1rem; transition: background 0.2s; display: flex; align-items: center; justify-content: center;" onmouseover="this.style.background='#f0eae1'" onmouseout="this.style.background='#fdfbf9'">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        
+                    </div>
+                </div>
+                
+                <button class="btn-primary" onclick="placeOrder()" style="width: 100%; padding: 16px; font-weight: bold; letter-spacing: 0.5px; border-radius: 8px; box-shadow: 0 4px 10px rgba(181, 148, 111, 0.3);">
+                    Confirm & Place Order
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="userPreviewModal" style="display:none; background: rgba(0,0,0,0.9);">
+    <div class="modal-box" style="max-width: 600px; padding: 0; overflow: hidden; border-radius: 20px; background: #1a1a1a;">
+        <button class="modal-close" onclick="closeModal('userPreviewModal')" style="color: white; z-index: 100;">&times;</button>
+        
+        <div id="userCanvas" style="position: relative; display: flex; align-items: center; justify-content: center; min-height: 500px; background: #222;">
+            <img id="userPreviewImg" src="" style="max-width: 100%; max-height: 100%; pointer-events: none; user-select: none;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="designStudioModal" style="display:none; background: rgba(0,0,0,0.95);">
+    <div class="modal-box" style="max-width: 1100px; width: 95%; height: 90vh; display: flex; flex-direction: row; padding: 0; overflow: hidden; border-radius: 20px;">
+        
+        <div id="canvasContainer" style="flex: 1.5; background: #1a1a1a; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <img id="studioImg" src="" style="max-width: 100%; max-height: 100%; pointer-events: none; user-select: none;">
+            
+            <div id="canvasItemsWrapper" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
+            
+            <div style="position: absolute; bottom: 20px; left: 20px; color: white; background: rgba(0,0,0,0.5); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem;">
+                <i class="fas fa-mouse-pointer"></i> Click an item to move or edit it
+            </div>
+        </div>
+
+        <div style="flex: 1; background: white; padding: 30px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto;">
+            <div>
+                <h3 style="font-family: 'Playfair Display'; font-size: 1.8rem; margin-bottom: 5px;">Personalize</h3>
+                <p style="color: var(--taupe); font-size: 0.85rem;">Add multiple texts and borders to your design!</p>
+            </div>
+            
+            <div style="background: var(--cream); padding: 15px; border-radius: 12px; border: 1px solid var(--border-light);">
+                <label style="font-weight: bold; font-size: 0.75rem; color: var(--walnut); letter-spacing: 1px;">ADD TEXT</label>
+                <textarea id="studioTextAdd" placeholder="Enter text" style="width: 100%; height: 60px; padding: 10px; border-radius: 8px; border: 1px solid var(--sand); margin-top: 8px; resize: none; font-family: inherit; margin-bottom: 0px;"></textarea>
+                <button class="btn-outline" onclick="addTextToCanvas()" style="width: 100%; margin-top: 0px; padding: 10px; border-color: var(--primary); color: var(--primary); font-weight: bold;">
+                    <i class="fas fa-plus"></i> Add Text to Design
+                </button>
+                </div>
+
+            <div style="background: var(--cream); padding: 15px; border-radius: 12px; border: 1px solid var(--border-light);">
+                <label style="font-weight: bold; font-size: 0.75rem; color: var(--walnut); letter-spacing: 1px;">ADD A BORDER / SYMBOL</label>
+                <select id="studioBorderAdd" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--sand); margin-top: 8px;">
+                    <option value="━━━━━━━">━━━━━ Solid Line</option>
+                    <option value="• ────── ✾ ────── •">• ── ✾ ── • Floral Line</option>
+                    <option value="✧❁❁❁✧✿✿✿✧❁❁❁✧">✧❁❁❁✧ Border</option>
+                    <option value="⊱ ────── {⋅. ♪ .⋅} ────── ⊰">⊱ ── Ribbon</option>
+                </select>
+                  
+                <button class="btn-outline" onclick="addBorderToCanvas()" style="width: 100%; margin-top: 8px; padding: 10px; border-color: var(--primary); color: var(--primary); font-weight: bold;">
+                    <i class="fas fa-plus"></i> Add Border to Design
+                </button>
+            </div>
+
+            <div id="editPropertiesPanel" style="background: white; padding: 15px; border-radius: 12px; border: 2px solid var(--primary); opacity: 0.4; pointer-events: none; transition: 0.3s;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <label style="font-weight: bold; font-size: 0.75rem; color: var(--walnut); letter-spacing: 1px;">EDIT SELECTED ITEM</label>
+                    <button onclick="deleteSelectedItem()" style="background: #ffebee; color: #c62828; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.75rem; font-weight: bold;">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; font-size: 0.75rem; color: var(--walnut); letter-spacing: 1px; display: block;">EDIT FONT</label>
+                    
+                    <select id="studioFont" onchange="updateSelectedItem()" style="width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--sand); background: #fdfbf9; margin-top: 8px; font-family: inherit; cursor: pointer;">
+                        <option value="Arial">Default (Arial)</option>
+                        <option value="Dancing Script" style="font-family: 'Dancing Script';">Dancing Script</option>
+                        <option value="Pacifico" style="font-family: 'Pacifico';">Pacifico</option>
+                        <option value="Cinzel" style="font-family: 'Cinzel';">Cinzel</option>
+                        <option value="Great Vibes" style="font-family: 'Great Vibes';">Great Vibes</option>
+                        <option value="Playfair Display" style="font-family: 'Playfair Display';">Playfair Display</option>
+                        <option value="Lobster" style="font-family: 'Lobster';">Lobster</option>
+                        <option value="Satisfy" style="font-family: 'Satisfy';">Satisfy</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 15px; margin-top: 5px;">
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.7rem; color: var(--taupe); display: flex; justify-content: space-between;">
+                            <span>SIZE</span>
+                            <span id="studioSizeLabel">30px</span>
+                        </label>
+                        
+                        <div class="measurement-input-wrapper" style="margin-bottom: 8px;">
+                            <input type="text" id="manualSizeInput" value="30px" oninput="updateSelectedItem()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--sand); background: #fdfbf9; font-family: inherit; font-size: 1rem;">
+                            <div class="caret-spinners">
+                                <i class="fas fa-caret-up" onclick="incrementSize(1)"></i>
+                                <i class="fas fa-caret-down" onclick="incrementSize(-1)"></i>
+                            </div>
+                        </div>
+                        
+                        <input type="range" id="studioSizeSlider" min="10" max="150" value="30" oninput="updateSelectedItem()" style="width: 100%; accent-color: var(--primary);">
+                    </div>
+                    
+                    <div style="flex: 1;">
+                        <label style="font-size: 0.7rem; color: var(--taupe); display: flex; justify-content: space-between;">
+                            <span>ROTATE</span>
+                            <span id="studioRotateLabel">0°</span>
+                        </label>
+                        
+                        <div class="measurement-input-wrapper" style="margin-bottom: 8px;">
+                            <input type="text" id="manualRotateInput" value="0°" oninput="updateSelectedItem()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--sand); background: #fdfbf9; font-family: inherit; font-size: 1rem;">
+                            <div class="caret-spinners">
+                                <i class="fas fa-caret-up" onclick="incrementRotate(1)"></i>
+                                <i class="fas fa-caret-down" onclick="incrementRotate(-1)"></i>
+                            </div>
+                        </div>
+                        
+                        <input type="range" id="studioRotateSlider" min="-180" max="180" value="0" oninput="updateSelectedItem()" style="width: 100%; accent-color: var(--primary);">
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <input type="file" id="imageUploadInput" accept="image/png, image/jpeg, image/svg+xml" style="display: none;" onchange="handleImageUpload(event)">
+                <button class="btn-outline" onclick="document.getElementById('imageUploadInput').click()" style="width: 100%; margin-top: 8px; padding: 10px; border-color: var(--primary); color: var(--primary); font-weight: bold;">
+                    <i class="fas fa-upload"></i> (Import transparent image)
+                </button>
+            </div>
+            <div style="margin-top: auto; padding-top: 10px; border-top: 1px solid var(--sand); display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn-primary" onclick="saveStudioDesign()" style="width: 100%; padding: 15px; font-weight: bold;">
+                    <i class="fas fa-check"></i> Save Layout & Return
+                </button>
+                <button class="btn-outline" onclick="closeModal('designStudioModal'); openModal('productDetailsModal');" style="width: 100%; border: none; color: var(--taupe);">
+                    Discard Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="orderSuccessModal">
+    <div class="modal-box success-modal-box">
+        <div class="success-icon-wrapper">
+            <i class="fas fa-check"></i>
+        </div>
+        <h2 class="success-title">Order Placed!</h2>
+        <p class="success-message">
+            Thank you for your purchase. Your faith-inspired engraving is now being processed. You can track its status in your order history.
+        </p>
+        <div class="success-actions">
+            <button class="btn-primary w-100" onclick="goToOrders()">
+                <i class="fas fa-shopping-bag icon-left"></i> View My Orders
+            </button>
+            <button class="btn-outline w-100" onclick="closeModal('orderSuccessModal'); showSection('products');">
+                Continue Shopping
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="cancelOrderModal">
+    <div class="modal-box cancel-modal-box">
+        <button class="modal-close" onclick="closeModal('cancelOrderModal')">&times;</button>
+        <h3 class="cancel-modal-title">Cancel Order</h3>
+        <p class="cancel-modal-text">Please tell us why you are cancelling this order. This action cannot be undone.</p>
+        
+        <div class="cancel-form-group">
+            <label for="cancelReason" class="cancel-label">Reason for Cancellation *</label>
+            <select id="cancelReason" class="cancel-select">
+                <option value="" disabled selected>Select a reason...</option>
+                <option value="Changed my mind">I changed my mind</option>
+                <option value="Ordered by mistake">I ordered by mistake</option>
+                <option value="Found a better price elsewhere">Found a better price elsewhere</option>
+                <option value="Shipping time is too long">Shipping time is too long</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <input type="hidden" id="cancelOrderIdToSubmit">
+
+        <div class="cancel-actions">
+            <button class="btn-outline" onclick="closeModal('cancelOrderModal')">Keep Order</button>
+            <button class="btn-primary btn-danger" onclick="submitCancellation()" id="confirmCancelBtn">
+                Confirm Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="passwordSuccessModal">
+    <div class="modal-box success-modal-box">
+        <div class="success-icon-wrapper">
+            <i class="fas fa-lock"></i> </div>
+        <h2 class="success-title">Password Updated!</h2>
+        <p class="success-message">
+            Your account password has been successfully changed. Please use your new password the next time you log in.
+        </p>
+        <div class="success-actions">
+            <button class="btn-primary w-100" onclick="closeModal('passwordSuccessModal'); showSection('account');">
+                Back to My Account
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="updateSuccessModal">
+    <div class="modal-box success-modal-box">
+        <div class="success-icon-wrapper" style="background: #d1e7dd; color: #0f5132;">
+            <i class="fas fa-user-check"></i>
+        </div>
+        <h2 class="success-title">Update Complete!</h2>
+        <p class="success-message">
+            Your account details have been successfully updated. Your profile now reflects your latest information.
+        </p>
+        <div class="success-actions">
+            <button class="btn-primary w-100" onclick="closeModal('updateSuccessModal'); showSection('account');">
+                Back to My Account
+            </button>
+        </div>
+    </div>
+</div>
+
+
+<script type="module" src="firebase-config.js"></script>
+<script type="module" src="user.js?v=101"></script>
+</body>
+</html>

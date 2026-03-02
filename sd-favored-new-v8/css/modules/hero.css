@@ -1,0 +1,116 @@
+/* =========================================
+   HERO.CSS - Desktop Hero Only
+   ========================================= */
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: transparent !important;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    repeating-linear-gradient(45deg, rgba(94,48,26,0.03) 0px, rgba(94,48,26,0.03) 3px, transparent 3px, transparent 9px),
+    radial-gradient(circle at 30% 40%, rgba(212,165,95,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero-content {
+  flex: 1;
+  max-width: 550px;
+  text-align: center;
+  margin: 0 auto;
+  animation: fadeInUp 0.8s ease;
+}
+
+.hero h1 {
+  font-size: clamp(2.8rem, 5vw, 3.8rem);
+  line-height: 1.2;
+  margin-bottom: 20px;
+  color: var(--walnut);
+  font-weight: 700;
+}
+
+.hero p {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  margin-bottom: 35px;
+  max-width: 450px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-image {
+  flex: 1;
+  max-width: 450px;
+  margin-left: 40px;
+  animation: fadeInRight 0.8s ease, float 6s ease-in-out infinite;
+}
+
+.hero-image > div {
+  background: white;
+  padding: 20px;
+  border-radius: 30px;
+  box-shadow: var(--shadow-hover);
+  border: 1px solid var(--sand);
+  transform: rotate(1deg);
+  transition: transform 0.3s ease;
+}
+
+.hero-image > div:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+.hero-image img {
+  width: 100%;
+  border-radius: 20px;
+  display: block;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Animation Class */
+.fade-out {
+    opacity: 0;
+    transform: translateY(10px) rotate(0deg);
+}
+
+#heroCard {
+    transition: all 0.6s ease-in-out;
+}
+
