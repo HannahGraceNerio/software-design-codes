@@ -437,8 +437,7 @@ window.loadOrders = () => {
                         if (child.tagName !== 'IMG') child.remove();
                     });
 
-                    // --- 2A. RENDER NEW MULTI-ITEM CANVAS DESIGNS ---
-// --- 2A. RENDER NEW MULTI-ITEM CANVAS DESIGNS ---
+
                     if (o.elements && Array.isArray(o.elements)) {
                         o.elements.forEach(item => {
                             let el;
@@ -749,11 +748,13 @@ window.filterChatUsers = (filter) => {
     renderUserList();
 };
 
+let onlineUsersMap = new Map(); 
+
 function loadChatUsers() {
     const list = document.getElementById('adminChatUserList');
     if (!list) return;
     
-    // Show skeleton loading for chat users list
+    // Show skeleton loading for chat users list (Your exact code)
     list.innerHTML = Array(4).fill(0).map(() => `
         <div class="user-tab" style="display: flex; align-items: center; gap: 12px; padding: 15px;">
             <div class="skeleton-loader" style="width: 48px; height: 48px; border-radius: 50%;"></div>
@@ -764,6 +765,7 @@ function loadChatUsers() {
         </div>
     `).join('');
 
+    // --- 1. YOUR ORIGINAL CHATS LISTENER ---
     const q = query(collection(db, "chats"), orderBy("timestamp", "desc"));
     
     onSnapshot(q, (snapshot) => {
@@ -774,6 +776,9 @@ function loadChatUsers() {
             const uid = data.userId;
             const displayName = data.userName || data.userEmail || "Anonymous Customer";
             const msgText = data.text;
+            
+            // FIX: Skip documents that don't have actual message text
+            if (!msgText || msgText.trim() === "") return; 
             
             // FIX #3: Safely handle missing timestamps to prevent sorting crashes
             let msgTime = new Date();
@@ -806,23 +811,53 @@ function loadChatUsers() {
         });
         
         renderUserList();
-        updateUnreadBadgeTotal();
+        if (typeof updateUnreadBadgeTotal === 'function') updateUnreadBadgeTotal();
     }, (error) => {
         console.error("Error loading chat users:", error);
     });
+
+    // --- 2. NEW: PRESENCE LISTENER ---
+    onSnapshot(collection(db, "presence"), (snapshot) => {
+        onlineUsersMap.clear();
+        snapshot.forEach(docSnap => {
+            const data = docSnap.data();
+            if (data.status === "online") {
+                onlineUsersMap.set(docSnap.id, {
+                    email: data.email || "Unknown User",
+                    lastActive: data.lastActive
+                });
+            }
+        });
+        if (chatFilter === 'online') {
+            renderUserList();
+        }
+    });
 }
 
-function checkIsOnline(lastMessageTime) {
-    const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
-    return lastMessageTime >= tenMinutesAgo;
-}
 
 function renderUserList() {
     const list = document.getElementById('adminChatUserList');
     if (!list) return;
     
     list.innerHTML = "";
-    
+
+    if (chatFilter === 'online') {
+        if (onlineUsersMap.size === 0) {
+            list.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>No users currently online</p></div>';
+            return;
+        }
+
+        onlineUsersMap.forEach((info, uid) => {
+            // Apply search filter to the email
+            if (userSearchTerm && !info.email.toLowerCase().includes(userSearchTerm)) return;
+            
+            // Draw the special Online tab (shows email only)
+            list.appendChild(createOnlineUserTabElement(uid, info.email));
+        });
+        return; // Stop here, do not render chat history!
+    }
+
+    // --- YOUR ORIGINAL CHAT HISTORY LOGIC ---
     if (userMap.size === 0) {
         list.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><p>No conversations yet</p><small>Customers will appear here when they message</small></div>';
         return;
@@ -837,12 +872,6 @@ function renderUserList() {
             // 2. Unread Filter
             if (chatFilter === 'unread' && info.unread === 0) {
                 return false;
-            }
-            // 3. NEW: Online Filter!
-            if (chatFilter === 'online') {
-                if (!checkIsOnline(info.lastTime)) {
-                    return false; // Hide them if they aren't online
-                }
             }
             return true;
         })
@@ -891,6 +920,31 @@ function createUserTabElement(uid, info) {
         selectUserChat(uid, info);
     };
     
+    return userDiv;
+}
+
+function createOnlineUserTabElement(uid, email) {
+    const userDiv = document.createElement('div');
+    userDiv.className = `user-tab`;
+    userDiv.style.cursor = 'default'; 
+    
+    const firstLetter = email.charAt(0).toUpperCase();
+
+    userDiv.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+            <div style="position:relative;">
+                <div class="user-avatar" style="background: var(--primary);">${firstLetter}</div>
+            </div>
+            <div class="user-info">
+                <div class="user-name">
+                    <span class="user-name-text">${email}</span>
+                </div>
+                <div class="user-last-msg" style="color: var(--taupe); font-style: italic;">
+                    Browsing the site...
+                </div>
+            </div>
+        </div>
+    `;
     return userDiv;
 }
 
