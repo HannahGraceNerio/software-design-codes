@@ -15,12 +15,34 @@ window.productsData = {};
 onAuthStateChanged(auth, async (user) => {
     if (user) {
         currentUser = user;
+        
+        const presenceRef = doc(db, "presence", user.uid);
+        await setDoc(presenceRef, {
+            status: "online",
+            email: user.email, 
+            lastActive: new Date().toISOString()
+        }, { merge: true });
+
         loadUserProfile(user.uid);
         loadUserOrders(user.uid);
         loadProducts();
         listenForMessages();
     } else {
         window.location.href = "/"; 
+    }
+});
+
+window.logoutUser = async () => {
+    if (currentUser) {
+        await updateDoc(doc(db, "presence", currentUser.uid), { status: "offline" });
+    }
+    await signOut(auth);
+    window.location.href = "/";
+};
+
+window.addEventListener("beforeunload", () => {
+    if (currentUser) {
+        setDoc(doc(db, "presence", currentUser.uid), { status: "offline" }, { merge: true });
     }
 });
 
@@ -43,10 +65,6 @@ window.showSection = (id) => {
     if(navLink) navLink.classList.add('active');
 };
 
-window.logoutUser = async () => {
-    await signOut(auth);
-    window.location.href = "/";
-};
 
 document.addEventListener('DOMContentLoaded', () => {
     const dropdownToggle = document.querySelector('.dropdown-toggle');
