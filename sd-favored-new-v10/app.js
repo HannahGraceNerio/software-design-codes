@@ -201,18 +201,6 @@ window.closeModal = (id) => {
     if(el) el.style.display = 'none';
 };
 
-window.toggleAuth = (type) => {
-    const login = document.getElementById('loginSection');
-    const signup = document.getElementById('signupSection');
-    
-    if (type === 'signup') {
-        login.style.display = 'none';
-        signup.style.display = 'block';
-    } else {
-        login.style.display = 'block';
-        signup.style.display = 'none';
-    }
-};
 
 window.togglePasswordVisibility = (inputId, iconElement) => {
     const input = document.getElementById(inputId);
@@ -256,10 +244,26 @@ async function saveSocialUser(user) {
 // --- EMAIL AUTHENTICATION ---
 
 window.loginUser = async () => {
-    const email = document.getElementById('loginEmail').value;
+    const email = document.getElementById('loginEmail').value.trim();
     const pass = document.getElementById('loginPassword').value;
     const loginBtn = document.querySelector('#loginSection .btn-auth-submit');
     const originalText = loginBtn.innerHTML;
+
+    // Error Elements
+    const loginError = document.getElementById('loginError');
+    const loginErrorText = document.getElementById('loginErrorText');
+
+    // 1. Reset error initially
+    if (loginError) loginError.style.display = 'none';
+
+    // 2. Basic Validation: Prevent empty fields
+    if (!email || !pass) {
+        if (loginError && loginErrorText) {
+            loginErrorText.innerText = "Please enter both your email and password.";
+            loginError.style.display = 'block';
+        }
+        return;
+    }
 
     try {
         loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
@@ -268,19 +272,35 @@ window.loginUser = async () => {
         const result = await signInWithEmailAndPassword(auth, email, pass);
         const user = result.user;
 
-        // CHECK IF EMAIL IS VERIFIED (BUT SKIP THIS CHECK FOR THE ADMIN)
+        // 3. CHECK IF EMAIL IS VERIFIED (BUT SKIP FOR ADMIN)
         if (!user.emailVerified && email !== "admin@favored.com") {
             await signOut(auth); // Sign them back out
-            window.closeModal('authModal'); 
             
-            showToast("Please check your inbox and verify your email first.", "error"); 
+            // Show inline error asking them to verify
+            if (loginError && loginErrorText) {
+                loginErrorText.innerText = "Please check your inbox and verify your email first.";
+                loginError.style.display = 'block';
+            }
             return;
         }
 
+        // 4. Success! Redirect based on role.
         window.location.href = (email === "admin@favored.com") ? "/admin" : "/user"; 
         
     } catch (error) { 
-        showToast("Login failed: Please check your inbox and verify your email first.", 'error'); 
+        // 5. Cleanly Format Firebase Login Errors
+        let friendlyMessage = "Invalid email or password.";
+        if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
+            friendlyMessage = "Incorrect email or password.";
+        } else if (error.code === 'auth/too-many-requests') {
+            friendlyMessage = "Too many failed attempts. Please try again later.";
+        }
+
+        // Display the error inline
+        if (loginError && loginErrorText) {
+            loginErrorText.innerText = friendlyMessage;
+            loginError.style.display = 'block';
+        }
     } finally {
         if (loginBtn) {
             loginBtn.innerHTML = originalText;
@@ -297,22 +317,48 @@ window.signupUser = async () => {
     const signupBtn = document.querySelector('#signupSection .btn-auth-submit');
     const originalText = signupBtn.innerHTML;
 
-    // Validation
-    if (pass !== confirm) {
-        return showToast("Passwords do not match!", 'error');
-    }
-    if (pass.length < 8) {
-        return showToast("Password must be at least 8 characters.", 'error');
+    // Error Elements
+    const dpaConsent = document.getElementById('dpaConsent');
+    const dpaError = document.getElementById('dpaError');
+    const passError = document.getElementById('signupPasswordError');
+    const passErrorText = document.getElementById('passErrorText');
+    const generalError = document.getElementById('signupGeneralError');
+    const generalErrorText = document.getElementById('generalErrorText');
+    
+    // 1. Reset all errors initially
+    if (passError) passError.style.display = 'none';
+    if (generalError) generalError.style.display = 'none';
+    if (dpaError) dpaError.style.display = 'none';
+    
+    // 2. Validate Privacy Policy
+    if (dpaConsent && !dpaConsent.checked) {
+        if (dpaError) dpaError.style.display = 'block'; 
+        return; 
     }
 
+    // 3. Validate Passwords
+    if (pass !== confirm) {
+        if (passError && passErrorText) {
+            passErrorText.innerText = "Passwords do not match.";
+            passError.style.display = 'block';
+        }
+        return;
+    }
+    if (pass.length < 8) {
+        if (passError && passErrorText) {
+            passErrorText.innerText = "Password must be at least 8 characters.";
+            passError.style.display = 'block';
+        }
+        return;
+    }
+
+    // 4. Process Signup
     try {
         signupBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
         signupBtn.disabled = true;
 
-        // 1. Create Account
         const result = await createUserWithEmailAndPassword(auth, email, pass);
         
-        // 2. Save Data to Firestore
         await setDoc(doc(db, "users", result.user.uid), {
             name: name,
             email: email,
@@ -321,23 +367,28 @@ window.signupUser = async () => {
             createdAt: new Date().toISOString()
         });
 
-        // 3. Send Verification Email
         await sendEmailVerification(result.user);
-
-        // 4. Force Sign Out
         await signOut(auth);
 
-        // 5. Update UI
         document.getElementById('signupName').value = '';
         document.getElementById('signupEmail').value = '';
         document.getElementById('signupPassword').value = '';
         document.getElementById('confirmPassword').value = '';
         
         window.closeModal('authModal');
-        window.openModal('verifyEmailModal'); // Show the success modal!
+        window.openModal('verifyEmailModal'); 
         
     } catch (error) { 
-        showToast("Signup failed: " + error.message, 'error'); 
+        let friendlyMessage = "An error occurred during sign up.";
+        if (error.code === 'auth/email-already-in-use') friendlyMessage = "This email is already registered.";
+        else if (error.code === 'auth/invalid-email') friendlyMessage = "Please enter a valid email address.";
+        else if (error.code === 'auth/weak-password') friendlyMessage = "Password is too weak.";
+        else friendlyMessage = error.message;
+
+        if (generalError && generalErrorText) {
+            generalErrorText.innerText = friendlyMessage;
+            generalError.style.display = 'block';
+        }
     } finally {
         signupBtn.innerHTML = originalText;
         signupBtn.disabled = false;
@@ -682,13 +733,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
 const originalToggleAuth = window.toggleAuth;
 
-window.toggleAuth = function(type) {
-    if (originalToggleAuth) {
-        originalToggleAuth(type);
+window.toggleAuth = (type) => {
+    const login = document.getElementById('loginSection');
+    const signup = document.getElementById('signupSection');
+    const forgot = document.getElementById('forgotSection');
+    
+    // 1. Hide EVERYTHING first
+    if (login) login.style.display = 'none';
+    if (signup) signup.style.display = 'none';
+    if (forgot) forgot.style.display = 'none';
+    
+    // 2. Show only the requested section
+    if (type === 'signup') {
+        if (signup) signup.style.display = 'block';
+    } else if (type === 'forgot') {
+        if (forgot) forgot.style.display = 'block';
+    } else {
+        // Default to login
+        if (login) login.style.display = 'block';
     }
-
-    const currentSection = getCurrentVisibleSection();
-    updateMobileNavActiveState(currentSection);
 };
 
 // --- DYNAMIC SPOTLIGHT REVEAL ENGINE (10 LAYER READY) ---
