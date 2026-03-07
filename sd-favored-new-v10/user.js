@@ -324,32 +324,42 @@ window.filterUserOrders = (status) => {
 };
 
 
-// --- DATE FILTER LOGIC FOR USER ---
-window.filterUserBySpecificDate = (selectedDate) => {
-    const orderCards = document.querySelectorAll('.order-card-enhanced');
+// --- NEW: TIME RANGE FILTER FOR ORDERS ---
+window.filterOrdersByTime = (timeRange) => {
+    const orderCards = document.querySelectorAll('#order-container .order-card-enhanced');
+    const now = new Date();
     
-    // FIX 3: If the user clears the date, show all orders again instead of freezing!
-    if (!selectedDate) {
-        orderCards.forEach(card => card.style.display = "block");
-        return;
-    }
-
     let foundCount = 0;
 
     orderCards.forEach(card => {
-        const dateEl = card.querySelector('.order-date-value');       
-        if (dateEl) {
-            // Clean the text just in case it grabs an icon by accident
-            const dateText = dateEl.innerText.replace(/[^a-zA-Z0-9\s,]/g, '').trim(); 
-            const d = new Date(dateText);
-            
-            if (!isNaN(d.getTime())) {
-                const year = d.getFullYear();
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                const formattedCardDate = `${year}-${month}-${day}`;
+        // If "All Time" is selected, just show everything
+        if (timeRange === 'all') {
+            card.style.display = 'block';
+            foundCount++;
+            return;
+        }
 
-                if (formattedCardDate === selectedDate) {
+        const dateEl = card.querySelector('.order-date-value');
+        if (dateEl) {
+            const dateText = dateEl.innerText.replace(/[^a-zA-Z0-9\s,]/g, '').trim(); 
+            const orderDate = new Date(dateText);
+            
+            if (!isNaN(orderDate.getTime())) {
+                const diffTime = now - orderDate;
+                const diffDays = diffTime / (1000 * 60 * 60 * 24); 
+                
+                let show = false;
+                
+                // Logic for filters
+                if (timeRange === 'today' && orderDate.toDateString() === now.toDateString()) {
+                    show = true;
+                } else if (timeRange === 'week' && diffDays <= 7) {
+                    show = true;
+                } else if (timeRange === 'month' && diffDays <= 30) {
+                    show = true;
+                }
+
+                if (show) {
                     card.style.display = "block";
                     foundCount++;
                 } else {
@@ -358,13 +368,13 @@ window.filterUserBySpecificDate = (selectedDate) => {
             }
         }
     });
-    
-    if (foundCount === 0) {
-        if (typeof showToast === 'function') showToast("No orders found for this date", "error");
-        else alert("No orders found for this date");
+
+    if (foundCount === 0 && timeRange !== 'all') {
+        if (typeof showToast === 'function') showToast("No orders found for this time range.", "error");
+        else alert("No orders found for this time range.");
         
-        const dateInput = document.getElementById('userDateFilter');
-        if(dateInput) dateInput.value = "";
+        const timeSelect = document.getElementById('timeRangeFilter');
+        if (timeSelect) timeSelect.value = "all";
         orderCards.forEach(card => card.style.display = "block");
     }
 };
