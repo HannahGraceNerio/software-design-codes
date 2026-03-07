@@ -27,7 +27,7 @@
     </nav>
     
     <div class="nav-right desktop-only" id="guest-buttons">
-        <button class="btn-outline" onclick="openModal('authModal')">Log In</button>
+        <button class="btn-outline" onclick="openModal('authModal'); toggleAuth('login')">Log In</button>
         <button class="btn-primary" onclick="openModal('authModal'); toggleAuth('signup');">Sign Up</button>
     </div>
     
@@ -53,7 +53,7 @@
             
             <!-- Auth Buttons -->
             <div class="mobile-auth">
-                <button class="btn-outline mobile-btn" onclick="openModal('authModal')">Log In</button>
+                <button class="btn-outline mobile-btn" onclick="openModal('authModal'); toggleAuth('login')">Log In</button>
                 <button class="btn-primary mobile-btn" onclick="openModal('authModal'); toggleAuth('signup');">Sign Up</button>
             </div>
         </div>
@@ -170,11 +170,7 @@
                     <!-- Right side - Shop Photo / Map -->
                     <div style="flex: 1; min-width: 300px; min-height: 400px; background: #2c1e14; position: relative; overflow: hidden;">
                         
-                        <!-- Option 1: If you have a shop photo -->
-                        <img src="assets/shop-photo.jpg" alt="Our Studio" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        
-                        <!-- Option 2: Fallback - Decorative placeholder -->
-                        <div style="display: none; width: 100%; height: 100%; background: linear-gradient(145deg, #3a2a1e, #2c1e14); flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; padding: 30px;">
+                        <div style="display: flex; width: 100%; height: 100%; background: linear-gradient(145deg, #3a2a1e, #2c1e14); flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; padding: 30px;">
                             <i class="fas fa-store" style="font-size: 5rem; color: var(--golden); margin-bottom: 20px; opacity: 0.8;"></i>
                             <h4 style="color: var(--golden); margin-bottom: 10px; font-size: 1.8rem;">Favored & Guided</h4>
                             <p style="margin-bottom: 15px; font-size: 1rem; opacity: 0.9;">Faith-Inspired Engraving Studio</p>
@@ -185,7 +181,6 @@
                             </a>
                         </div>
                         
-                        <!-- Subtle overlay with address -->
                         <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.8)); padding: 30px 20px 20px; color: white;">
                             <p style="font-size: 0.9rem; margin: 0;">
                                 <i class="fas fa-map-marker-alt" style="color: var(--golden); margin-right: 5px;"></i> 
@@ -285,7 +280,7 @@
     <div class="modal-box auth-card" style="max-width: 550px; padding: 40px; max-height: 90vh; overflow-y: auto;">
         <button class="modal-close" onclick="closeModal('authModal')" style="position: sticky; top: 0; float: right;">&times;</button>
         
-        <div id="loginSection">
+       <div id="loginSection">
             <h2 class="auth-title">Log In</h2>
             <div class="social-group">
                 <button class="social-btn" onclick="loginWithGoogle()">
@@ -297,16 +292,18 @@
             
             <div class="input-group">
                 <label>Email</label>
-                <input type="email" id="loginEmail" placeholder="Enter your email" />
+                <input type="email" id="loginEmail" placeholder="Enter your email" oninput="document.getElementById('loginError').style.display='none'" />
             </div>
             <div class="input-group">
                 <label>Password</label>
                 <div class="password-wrapper" style="position: relative;">
-                    <input type="password" id="loginPassword" placeholder="Enter your password" style="padding-right: 40px;" />
+                    <input type="password" id="loginPassword" placeholder="Enter your password" style="padding-right: 40px;" oninput="document.getElementById('loginError').style.display='none'" />
                     <i class="far fa-eye-slash toggle-password" onclick="togglePasswordVisibility('loginPassword', this)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--taupe); z-index: 10;"></i>
                 </div>
                 <a href="javascript:void(0)" class="forgot-pass" onclick="toggleAuth('forgot')">Forgot password?</a>
             </div>
+            
+            <p id="loginError" style="color: #e74c3c; font-size: 0.85rem; margin: 0 0 15px 0; text-align: left; display: none;"><i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i><span id="loginErrorText"></span></p>
             
             <button class="btn-auth-submit" onclick="loginUser()">Log In</button>
             <p class="auth-switch">Don't have an account? <span onclick="toggleAuth('signup')">Sign Up</span></p>
@@ -331,14 +328,14 @@
                 
                 <div class="input-group">
                     <label>Email</label>
-                    <input type="email" id="signupEmail" placeholder="Enter your email" />
+                    <input type="email" id="signupEmail" placeholder="Enter your email" oninput="document.getElementById('signupGeneralError').style.display='none'" />
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="input-group">
                         <label>Password</label>
                         <div class="password-wrapper" style="position: relative;">
-                            <input type="password" id="signupPassword" placeholder="Create a password" style="padding-right: 40px;" />
+                            <input type="password" id="signupPassword" placeholder="Create a password" style="padding-right: 40px;" oninput="document.getElementById('signupPasswordError').style.display='none'" />
                             <i class="far fa-eye-slash toggle-password" onclick="togglePasswordVisibility('signupPassword', this)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--taupe); z-index: 10;"></i>
                         </div>
                         <small class="input-hint">Min. 8 characters</small>
@@ -347,19 +344,24 @@
                     <div class="input-group">
                         <label>Confirm Password</label>
                         <div class="password-wrapper" style="position: relative;">
-                            <input type="password" id="confirmPassword" placeholder="Confirm password" style="padding-right: 40px;" />
+                            <input type="password" id="confirmPassword" placeholder="Confirm password" style="padding-right: 40px;" oninput="document.getElementById('signupPasswordError').style.display='none'" />
                             <i class="far fa-eye-slash toggle-password" onclick="togglePasswordVisibility('confirmPassword', this)" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--taupe); z-index: 10;"></i>
                         </div>
                     </div>
                 </div>
                 
+                <p id="signupPasswordError" style="color: #e74c3c; font-size: 0.85rem; margin: -5px 0 0 5px; display: none;"><i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i><span id="passErrorText"></span></p>
+                
                 <div style="display: flex; align-items: flex-start; gap: 10px; margin: 15px 0 5px; text-align: left; background: var(--cream); padding: 15px; border-radius: 12px; border: 1px solid var(--sand);">
-                    <input type="checkbox" id="dpaConsent" required style="margin-top: 3px; cursor: pointer; width: 18px; height: 18px; accent-color: var(--primary); flex-shrink: 0;">
+                    <input type="checkbox" id="dpaConsent" onchange="document.getElementById('dpaError').style.display='none'" style="margin-top: 3px; cursor: pointer; width: 18px; height: 18px; accent-color: var(--primary); flex-shrink: 0;">
                     <label for="dpaConsent" style="font-size: 0.85rem; color: var(--text-body); line-height: 1.5; cursor: pointer;">
                         I agree to the collection and processing of my personal data in accordance with the Data Privacy Act of 2012. Read our <a href="javascript:void(0)" onclick="openModal('privacyModal')" style="color: var(--primary); font-weight: 600; text-decoration: underline;">Privacy Policy</a>.
                     </label>
                 </div>
+                <p id="dpaError" style="color: #e74c3c; font-size: 0.8rem; margin: 0 0 10px 5px; display: none;"><i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i>Please agree to the Privacy Policy to continue.</p>
             </div>
+            
+            <p id="signupGeneralError" style="color: #e74c3c; font-size: 0.85rem; margin: 15px 0 0 0; text-align: left; display: none;"><i class="fas fa-exclamation-triangle" style="margin-right: 5px;"></i><span id="generalErrorText"></span></p>
             
             <button class="btn-auth-submit" onclick="signupUser()" style="margin-top: 25px; padding: 16px;">Create Account</button>
             <p class="auth-switch">Already have an account? <span onclick="toggleAuth('login')">Log In</span></p>
