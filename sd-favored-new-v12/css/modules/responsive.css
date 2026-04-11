@@ -1,0 +1,1281 @@
+
+/* =========================================
+   RESPONSIVE.CSS - All Mobile/Tablet Overrides
+   ========================================= */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  #stats-container {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  .section {
+    padding: 60px 5% !important;
+  }
+  
+  .hero h1 {
+    font-size: clamp(2.2rem, 4vw, 3rem) !important;
+  }
+  
+  .hero-content {
+    max-width: 450px !important;
+  }
+  
+  .hero-image {
+    max-width: 350px !important;
+  }
+}
+
+/* Mobile (under 768px) */
+@media (max-width: 768px) {
+  /* Grid Systems - Responsive columns based on width */
+  .products-grid,
+  .order-grid,
+  #adminProducts,
+  #wishlist .products-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+    gap: 15px !important;
+  }
+
+  
+  /* Typography */
+  .section-title {
+    font-size: 2rem !important;
+  }
+  
+  .section-sub {
+    font-size: 1rem !important;
+  }
+  
+  h1 {
+    font-size: clamp(2rem, 8vw, 2.5rem) !important;
+  }
+  
+  h2 {
+    font-size: clamp(1.5rem, 6vw, 2rem) !important;
+  }
+  
+  /* Layout */
+  .section {
+    padding: 40px 4% !important;
+  }
+  
+  /* Hero Section */
+  .hero {
+    min-height: auto !important;
+    padding: 40px 0 !important;
+  }
+  
+  .hero > div {
+    flex-direction: column !important;
+    gap: 30px !important;
+  }
+  
+  .hero-content {
+    max-width: 100% !important;
+    padding: 0 20px !important;
+  }
+  
+  .hero-image {
+    max-width: 280px !important;
+    margin-left: 0 !important;
+  }
+  
+  .hero-content div[style*="gap: 15px"] {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  
+  .hero-content button {
+    width: 100% !important;
+    min-width: auto !important;
+  }
+  
+  /* Navigation - Simplified for Hamburger */
+  .navbar {
+    flex-wrap: wrap;
+    padding: 15px !important;
+  }
+  
+  .nav-left {
+    width: auto !important;
+    justify-content: flex-start !important;
+  }
+  
+  .nav-center {
+    display: none;
+    flex-direction: column !important;
+    width: 100% !important;
+    order: 4;
+    margin-top: 15px;
+    background: linear-gradient(
+        165deg, 
+        #3a2a1e 0%,
+        #5e3a22 30%,
+        #2c1e14 70%,
+        #4a321f 100%
+    );
+    border-radius: 15px;
+    padding: 10px 0;
+  }
+  
+  .nav-center.show {
+    display: flex !important;
+  }
+  
+  .nav-center a {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 12px !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+  }
+  
+  .nav-right {
+    width: auto !important;
+    margin-left: auto;
+  }
+  
+  .user-menu-dropdown {
+    width: auto !important;
+  }
+  
+  .dropdown-toggle {
+    width: auto !important;
+    justify-content: center !important;
+  }
+  
+  .dropdown-content {
+    width: auto !important;
+    min-width: 200px !important;
+    right: 0 !important;
+    left: auto !important;
+  }
+    
+  /* Stats Cards */
+  #stats-container {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+    padding: 0 4% !important;
+    margin-bottom: 30px !important;
+  }
+  
+  .stat-card {
+    padding: 20px !important;
+  }
+  
+  .stat-card h3 {
+    font-size: 1.8rem !important;
+  }
+  
+  /* Admin Section Headers */
+  #products > div:first-child,
+  #orders > div:first-child,
+  #admin-chat > div:first-child {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+  }
+  
+  #products > div:first-child button {
+    width: 100% !important;
+  }
+  
+  /* Order Filters */
+  #orders > div:nth-child(2) {
+    flex-direction: column !important;
+    gap: 10px !important;
+  }
+  
+  .filter-btn {
+    width: 100% !important;
+    padding: 12px !important;
+  }
+  
+  /* Admin Chat */
+  #admin-chat > div[style*="grid-template-columns: 300px 1fr"] {
+    grid-template-columns: 1fr !important;
+    height: auto !important;
+    min-height: 500px !important;
+  }
+  
+  /* COMPLETE FIX: Restructure the chat sidebar for mobile */
+  .chat-users-sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    max-height: none !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    background: #fefcf9 !important;
+    overflow: hidden !important;
+  }
+  
+  .chat-users-header {
+    flex-shrink: 0 !important;
+    padding: 15px 15px 10px !important;
+  }
+  
+  .chat-users-list {
+    flex: 1 1 auto !important;
+    height: 0 !important; /* Force flex to calculate height properly */
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    padding: 10px 15px 15px !important;
+    margin: 0 !important;
+  }
+  
+  /* Ensure the last user tab doesn't create extra space */
+  .user-tab:last-child {
+    margin-bottom: 0 !important;
+  }
+  
+  .user-tab {
+    padding: 12px !important;
+    margin-bottom: 6px !important;
+  }
+  
+  .user-tab .user-name-text {
+    max-width: 150px !important;
+  }
+  
+  #adminChatUserList {
+    /* Remove or override any conflicting styles */
+    max-height: none !important;
+  }
+  
+  #adminChatMessages {
+    height: 300px !important;
+    max-height: 300px !important;
+    padding: 15px !important;
+  }
+  
+  #adminChatMessages .msg {
+    max-width: 85% !important;
+    padding: 10px 15px !important;
+  }
+  
+  .chat-input {
+    padding: 15px !important;
+  }
+
+  /* Admin Order Cards */
+  .order-card-admin {
+    padding: 20px !important;
+  }
+  
+  .order-card-admin > div:nth-child(2) {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+  }
+  
+  .order-img {
+    width: 100% !important;
+    height: auto !important;
+    max-height: 150px !important;
+  }
+  
+  .order-info {
+    width: 100% !important;
+  }
+  
+  .order-info h4 {
+    font-size: 1.1rem !important;
+  }
+  
+  /* Admin Product Cards */
+  #adminProducts .product-card {
+    padding: 12px !important;
+  }
+  
+  #adminProducts .product-card img {
+    aspect-ratio: 1/1;
+    margin-bottom: 10px;
+  }
+  
+  .admin-product-actions {
+    flex-wrap: wrap !important;
+    gap: 5px !important;
+  }
+  
+  .btn-plus, .btn-minus, .btn-edit, .btn-delete {
+    padding: 6px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .stock-badge {
+    font-size: 0.65rem !important;
+    padding: 3px 8px !important;
+  }
+  
+  /* Product Cards */
+  .product-card {
+    padding: 12px !important;
+  }
+  
+  .product-card h3 {
+    font-size: 1rem !important;
+    margin: 8px 0 4px !important;
+  }
+  
+  .product-card .price {
+    font-size: 1.1rem !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .product-card button {
+    padding: 8px 12px !important;
+    font-size: 0.85rem !important;
+  }
+  
+  .wishlist-btn {
+    width: 32px !important;
+    height: 32px !important;
+    top: 8px !important;
+    right: 8px !important;
+  }
+  
+  .wishlist-btn i {
+    font-size: 14px !important;
+  }
+  
+  .quick-view-btn {
+    opacity: 1 !important;
+    position: relative !important;
+    bottom: auto !important;
+    margin-top: 15px !important;
+  }
+  
+  .product-card:hover {
+    transform: none !important;
+  }
+  
+  /* User Hero */
+  #hero {
+    min-height: auto !important;
+    padding: 30px 0 !important;
+  }
+  
+  #hero > div {
+    flex-direction: column-reverse !important;
+    gap: 30px !important;
+  }
+  
+  #hero .hero-content {
+    max-width: 100% !important;
+    padding: 0 20px !important;
+  }
+  
+  #hero .hero-image {
+    max-width: 250px !important;
+    margin-left: 0 !important;
+  }
+  
+  #hero h1 {
+    font-size: clamp(2rem, 6vw, 2.8rem) !important;
+  }
+  
+  #hero .hero-content div[style*="gap: 15px"] {
+    flex-direction: column !important;
+  }
+  
+  #hero .hero-content button {
+    width: 100% !important;
+  }
+  
+  /* Profile Grid */
+  #account > div {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  
+  #account .product-card {
+    padding: 20px !important;
+  }
+  
+  /* Order Tracker */
+  .tracker-container {
+    padding: 15px !important;
+  }
+  
+  .steps {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 15px !important;
+  }
+  
+  .steps::before,
+  .progress-line {
+    display: none !important;
+  }
+  
+  .step-item {
+    width: 100% !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+  }
+  
+  .step-circle {
+    margin: 0 !important;
+    width: 35px !important;
+    height: 35px !important;
+    font-size: 14px !important;
+  }
+  
+  .step-text {
+    font-size: 14px !important;
+  }
+  
+  /* Product Detail Modal */
+  .details-grid {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  
+  #detailImg {
+    max-height: 250px !important;
+    object-fit: cover !important;
+  }
+  
+  #detailPrice {
+    font-size: 1.5rem !important;
+  }
+  
+  #orderQty {
+    width: 100% !important;
+  }
+  
+  /* Chat Messages */
+  #chat-messages .msg {
+    max-width: 90% !important;
+    font-size: 0.85rem !important;
+    padding: 10px 15px !important;
+  }
+  
+  /* Profile Forms */
+  #edit-details .product-card,
+  #change-password .product-card {
+    padding: 25px !important;
+    margin: 0 15px !important;
+  }
+  
+  #edit-details input,
+  #change-password input {
+    padding: 12px !important;
+  }
+  
+  /* Footer */
+  .footer {
+    padding: 40px 5% 20px !important;
+  }
+  
+  .footer-container {
+    grid-template-columns: 1fr !important;
+    gap: 30px !important;
+  }
+  
+  .footer-col {
+    padding: 15px !important;
+    text-align: center !important;
+  }
+  
+  .footer-col h3::after {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+  }
+  
+  .social-links {
+    justify-content: center !important;
+  }
+  
+  .footer-col p {
+    justify-content: center !important;
+  }
+  
+  /* Chat Container */
+  .chat-container {
+    max-width: 340px;
+    right: 10px !important;
+  }
+  
+  /* Toast Notifications */
+  .toast {
+    min-width: auto !important;
+    width: calc(100% - 40px) !important;
+    left: 20px !important;
+    transform: translateX(0) translateY(100px) !important;
+    font-size: 0.9rem !important;
+    padding: 12px 20px !important;
+  }
+  
+  .toast.fade-out {
+    transform: translateX(0) translateY(20px) !important;
+  }
+  
+  /* Modal */
+  .modal-box {
+    margin: 10px !important;
+    padding: 25px !important;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+  }
+  
+  .auth-card {
+    padding: 25px !important;
+  }
+  
+  .auth-title {
+    font-size: 24px !important;
+  }
+  
+  .social-group {
+    gap: 8px !important;
+  }
+  
+  /* Touch Targets */
+  button, 
+  .btn-primary, 
+  .btn-outline,
+  .filter-btn,
+  .nav-center a,
+  .user-tab,
+  .dropdown-toggle,
+  .social-links a {
+    min-height: 44px !important;
+  }
+  
+  /* Smooth Scrolling */
+  .modal-box,
+  #adminChatMessages,
+  #chat-messages {
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Prevent Text Resize */
+  body {
+    -webkit-text-size-adjust: 100% !important;
+  }
+  
+  /* Form Inputs */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+
+}
+
+body, html {
+    overflow-x: hidden !important;
+}
+
+@media screen and (max-width: 768px) {
+    .snap-container {
+        max-width: 280px; /* Reduces the size on tablets/large phones */
+        margin: 0 auto;   /* Keeps it perfectly centered */
+        position: relative; /* Just ensures your layers don't fly off the screen */
+    }
+    
+    .snap-container .base-engraving,
+    .snap-container .stack-img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+/* Very Small Phones (under 480px) */
+@media (max-width: 480px) {
+  .products-grid,
+  .order-grid,
+  #adminProducts,
+  #wishlist .products-grid {
+    gap: 10px !important;
+  }
+  
+  .product-card {
+    padding: 8px !important;
+  }
+  
+  .product-card h3 {
+    font-size: 0.9rem !important;
+  }
+  
+  .product-card .price {
+    font-size: 1rem !important;
+  }
+  
+  .product-card button {
+    padding: 6px 8px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  #adminProducts .product-card img {
+    aspect-ratio: 16/9 !important;
+  }
+  
+  .order-card-admin > div:first-child {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+  
+  .order-id, .order-date {
+    width: 100% !important;
+    text-align: center !important;
+  }
+  
+  .nav-center {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+  
+  .nav-center a {
+    width: 100% !important;
+    text-align: center !important;
+  }
+  
+  .nav-right {
+    flex-direction: column !important;
+    gap: 8px !important;
+  }
+  
+  .nav-right button {
+    width: 100% !important;
+  }
+  
+  .hero-image {
+    max-width: 240px !important;
+  }
+}
+
+/* Fluid Typography */
+html {
+  font-size: 16px;
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 12px;
+  }
+}
+
+
+/* Large Screen Fixes for Order Cards (1024px and above) */
+@media (min-width: 1024px) {
+    .order-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 30px !important;
+    }
+    
+    .order-card-enhanced {
+        max-width: 100%;
+    }
+    
+    .order-header-top {
+        flex-wrap: nowrap;
+    }
+    
+    .order-status {
+        font-size: 0.9rem;
+        padding: 6px 16px;
+    }
+    
+    .order-product {
+        flex-wrap: nowrap;
+    }
+    
+    .tracker-steps {
+        gap: 15px;
+    }
+    
+    .step-label {
+        font-size: 0.95rem;
+    }
+    
+    .step-desc {
+        font-size: 0.75rem;
+    }
+}
+
+/* Extra Large Screens (1400px and above) */
+@media (min-width: 1400px) {
+    .order-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 35px !important;
+    }
+    
+    .order-header {
+        padding: 25px 30px;
+    }
+    
+    .order-body {
+        padding: 30px;
+    }
+    
+    .order-number {
+        font-size: 1.2rem;
+    }
+    
+    .order-status {
+        font-size: 1rem;
+        padding: 8px 20px;
+    }
+    
+    .order-total {
+        font-size: 1.4rem;
+    }
+    
+    .order-product-img {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .order-product-name {
+        font-size: 1.3rem;
+    }
+}
+/* Wishlist Responsive Enhancements */
+@media (max-width: 768px) {
+    #wishlist .products-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 15px !important;
+    }
+    
+    .wishlist-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 15px !important;
+    }
+    
+    .wishlist-stats {
+        width: 100% !important;
+        justify-content: space-around !important;
+    }
+    
+    .wishlist-actions {
+        flex-direction: column !important;
+        align-items: stretch !important;
+    }
+    
+    .wishlist-filters {
+        justify-content: center !important;
+    }
+    
+    .wishlist-sort {
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 480px) {
+    #wishlist .products-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .wishlist-stats {
+        flex-wrap: wrap !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-card {
+        max-width: 90% !important;
+        padding: 25px !important;
+    }
+    
+    #signupSection [style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+    }
+}
+
+/* Push chat bubble behind mobile menu */
+body:has(.mobile-menu.open) #floatingChat,
+body:has(.menu-overlay.active) #floatingChat {
+    z-index: 1 !important;
+    pointer-events: none;
+}
+
+
+body:has(.mobile-menu.open) .chat-container .chat-header,
+body:has(.menu-overlay.active) .chat-container .chat-header {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* =========================================
+   DESIGN STUDIO - MOBILE OVERRIDES ONLY
+   ========================================= */
+
+@media (max-width: 768px) {
+    /* Make modal full screen on mobile */
+    #designStudioModal .modal-box {
+        width: 100% !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        flex-direction: column !important; /* Stack vertically on mobile */
+    }
+    
+    /* Canvas takes 40% height on mobile */
+    #designStudioModal #canvasContainer {
+        flex: none !important;
+        height: 40vh !important;
+        min-height: 250px !important;
+        width: 100% !important;
+    }
+    
+    /* Controls take 60% height and scroll */
+    #designStudioModal .modal-box > div:last-child {
+        flex: none !important;
+        height: 60vh !important;
+        overflow-y: auto !important;
+        padding: 15px !important;
+        width: 100% !important;
+    }
+    
+    /* Better touch targets */
+    #designStudioModal button,
+    #designStudioModal select,
+    #designStudioModal input[type="range"] {
+        min-height: 44px !important;
+    }
+    
+    /* Larger text in selects */
+    #designStudioModal select {
+        font-size: 16px !important;
+    }
+    
+    /* Prevent zoom on input focus */
+    #designStudioModal input[type="number"],
+    #designStudioModal input[type="text"],
+    #designStudioModal textarea {
+        font-size: 16px !important;
+    }
+    
+    /* Adjust spacing for stacked controls */
+    #editPropertiesPanel {
+        margin: 10px 0 !important;
+    }
+    
+    /* Make drag hint more visible */
+    #canvasContainer > div:last-child {
+        background: rgba(0,0,0,0.7) !important;
+        padding: 6px 12px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    /* Adjust textarea height */
+    #studioTextAdd {
+        height: 60px !important;
+    }
+    
+    /* Stack size and rotate controls vertically */
+    #editPropertiesPanel > div:last-child {
+        flex-direction: column !important;
+        gap: 15px !important;
+    }
+    
+    /* Make manual inputs full width */
+    #manualSizeInput,
+    #manualRotateInput {
+        width: 100% !important;
+        margin-top: 5px !important;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    #designStudioModal #canvasContainer {
+        height: 35vh !important;
+        min-height: 200px !important;
+    }
+    
+    #designStudioModal .modal-box > div:last-child {
+        height: 65vh !important;
+        padding: 12px !important;
+    }
+    
+    #designStudioModal h3 {
+        font-size: 1.3rem !important;
+        margin-bottom: 2px !important;
+    }
+    
+    #designStudioModal p {
+        font-size: 0.75rem !important;
+        margin-bottom: 8px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    #about-bottom-cards {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
+/* =========================================
+   MOBILE RESPONSIVE FILTERS (CSS ONLY)
+   ========================================= */
+
+/* Default: Hide the mobile dropdown on Desktop */
+.mobile-status-filters {
+    display: none !important; 
+}
+
+/* When the screen is mobile-sized (768px or smaller) */
+@media (max-width: 768px) {
+    /* Hide the row of buttons */
+    .desktop-status-filters {
+        display: none !important;
+    }
+    
+    /* Show the status dropdown */
+    .mobile-status-filters {
+        display: inline-flex !important;
+    }
+    
+    /* Force both dropdowns to stretch 100% width so they stack cleanly */
+    .time-filter-wrapper,
+    #timeRangeFilter {
+        width: 100%;
+    }
+}
+
+/* =========================================
+   COMPACT ORDER CARDS FOR MOBILE
+   ========================================= */
+@media (max-width: 768px) {
+    
+    /* -------------------------------------
+       1. ADMIN ORDER CARDS
+       ------------------------------------- */
+    .order-card-admin {
+        padding: 15px !important; /* Reduce outer padding from 25px */
+        border-radius: 15px !important; /* Slightly sharper corners */
+    }
+
+    .order-card-admin > div > div:nth-child(2) {
+        margin-bottom: 15px !important;
+        padding-bottom: 15px !important;
+    }
+
+    /* Shrink product image */
+    .order-card-admin .order-img {
+        width: 60px !important;
+        height: 60px !important;
+        border-radius: 10px !important;
+    }
+
+    /* Shrink text and titles */
+    .order-card-admin .order-id {
+        padding: 4px 12px !important;
+        font-size: 0.8rem !important;
+    }
+
+    .order-card-admin .order-product-name {
+        font-size: 0.95rem !important;
+        margin-bottom: 2px !important;
+    }
+
+    .order-card-admin .order-email,
+    .order-card-admin .order-date {
+        font-size: 0.75rem !important;
+    }
+
+    .order-card-admin .order-total {
+        font-size: 0.9rem !important;
+        margin-top: 2px !important;
+    }
+
+    /* Shrink the status dropdown and buttons */
+    .order-card-admin .status-select {
+        padding: 8px 15px !important;
+        font-size: 0.85rem !important;
+    }
+
+    .order-card-admin .view-design-btn {
+        padding: 8px !important;
+        font-size: 0.85rem !important;
+        margin-bottom: 10px !important;
+    }
+}
+
+/* =========================================
+   1-COLUMN EXACT DESKTOP REPLICA FOR MOBILE
+   ========================================= */
+@media (max-width: 768px) {
+    
+    /* 1. Force strictly 1 column for the grid */
+    #order-container {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 15px !important;
+    }
+
+    /* Card Container */
+    .order-card-enhanced {
+        width: 100% !important;
+        box-sizing: border-box !important;
+        border-radius: 12px !important;
+    }
+
+    /* 2. Header - Exactly like desktop: Left side (ID/Status), Right side (Date/Total) */
+    .order-card-enhanced .order-header {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+    }
+    
+    .order-card-enhanced .order-header-top {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    .order-card-enhanced .order-meta {
+        display: flex !important;
+        flex-direction: column !important; /* Stacks Date and Total neatly on the right */
+        align-items: flex-end !important;
+        text-align: right !important;
+        gap: 4px !important;
+    }
+
+    /* Fine-tune header text to fit mobile width */
+    .order-card-enhanced .order-number { font-size: 0.85rem !important; padding: 4px 12px !important; }
+    .order-card-enhanced .order-status { font-size: 0.75rem !important; padding: 4px 10px !important; margin: 0 !important; }
+    .order-card-enhanced .order-date { font-size: 0.8rem !important; }
+    .order-card-enhanced .order-total { font-size: 1rem !important; font-weight: bold !important; }
+
+    /* 3. Product - Image exactly beside text */
+    .order-card-enhanced .order-product {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 15px !important;
+        margin-bottom: 15px !important;
+    }
+
+    .order-card-enhanced .order-product-img {
+        width: 75px !important;
+        height: 75px !important;
+        border-radius: 8px !important;
+        flex-shrink: 0 !important;
+        margin: 0 !important;
+    }
+
+    .order-card-enhanced .order-product-details {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        text-align: left !important;
+    }
+
+    .order-card-enhanced .order-product-name {
+        font-size: 1.05rem !important;
+        margin-bottom: 5px !important;
+    }
+
+    .order-card-enhanced .order-personalization {
+        font-size: 0.8rem !important;
+    }
+
+    /* 4. Tracker - Exact Desktop Horizontal Layout WITH CONNECTING LINES */
+    .order-card-enhanced .tracker-steps {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        flex-wrap: nowrap !important;
+        position: relative !important;
+        z-index: 1 !important;
+    }
+    
+    /* Hide the old broken line just in case */
+    .order-card-enhanced .tracker-steps::before {
+        display: none !important;
+    }
+    
+    .order-card-enhanced .tracker-step {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        margin: 0 !important;
+        flex: 1 !important;
+        position: relative !important; /* Required to position the line */
+    }
+
+/* === THIS DRAWS THE LINE BACK === */
+    .order-card-enhanced .tracker-step:not(:last-child):after {
+        content: "" !important;
+        position: absolute !important;
+        top: 14px !important; /* Centers the line vertically with the icon */
+        left: 50% !important;
+        width: 100% !important;
+        height: 3px !important;
+        background-color: var(--sand) !important;
+        z-index: 0 !important; /* Puts line behind */
+    }
+
+    /* Line color when completed */
+    .order-card-enhanced .tracker-step.completed:not(:last-child):after {
+        background-color: var(--primary) !important; 
+    }
+    
+    /* === RESTORES THE ICONS === */
+    .order-card-enhanced .step-icon {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 28px !important;
+        height: 28px !important;
+        font-size: 0.8rem !important;
+        margin-bottom: 8px !important;
+        background: white !important; 
+        border: 2px solid var(--sand) !important; /* Grey ring for pending steps */
+        color: var(--taupe) !important; /* Grey icon for pending steps */
+        border-radius: 50% !important;
+        z-index: 2 !important; /* Pulls the icon IN FRONT of the connecting line */
+    }
+
+    /* Lights up the icon when the step is completed */
+    .order-card-enhanced .tracker-step.completed .step-icon {
+        background: var(--primary) !important;
+        border-color: var(--primary) !important;
+        color: white !important; /* White icon on gold background */
+    }
+    
+    .order-card-enhanced .step-label {
+        font-size: 0.7rem !important;
+        text-align: center !important;
+    }
+
+    /* 5. Action Buttons - Right aligned, side-by-side row */
+    .order-card-enhanced .order-actions-container {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: flex-end !important;
+        gap: 10px !important;
+        margin-top: 15px !important;
+    }
+    
+    .order-card-enhanced .order-actions-container button,
+    .order-card-enhanced .order-cancel-container button {
+        width: auto !important; /* Stop them from stretching 100% */
+        padding: 8px 16px !important;
+        font-size: 0.85rem !important;
+        min-height: 36px !important; /* Overrides the bulky 44px global touch target */
+        min-width: 0 !important;
+    }
+    
+    .order-card-enhanced .order-cancel-container {
+        text-align: right !important;
+        margin-top: 10px !important;
+    }
+}
+
+@media (max-width: 768px) {
+    
+    /* Target the canvas and its wrapper */
+    canvas, 
+    .canvas-container,
+    #designCanvas {
+        max-width: 100% !important;   /* Force it to never exceed the phone screen width */
+        height: auto !important;      /* Force the height to shrink proportionally */
+        object-fit: contain !important; /* Prevent the drawings inside from warping */
+        
+    }
+
+    canvas {
+        touch-action: none !important; 
+    }
+}
+
+/* =========================================
+   ULTRA-COMPACT MOBILE WISHLIST
+   ========================================= */
+@media (max-width: 768px) {
+    
+    /* 1. Force exactly 1 column for the list */
+    #wishlist .products-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+
+    /* 2. Use Grid to force Image on Left, Text on Right */
+    #wishlist .product-card {
+        display: grid !important;
+        grid-template-columns: 80px 1fr !important; /* 80px image, rest is text */
+        grid-template-rows: auto auto auto !important; /* 3 rows for Title, Price, Button */
+        gap: 4px 15px !important;
+        padding: 12px !important;
+        text-align: left !important;
+        position: relative !important;
+        border-radius: 12px !important;
+    }
+
+    /* 3. Lock Image to the Left Column */
+    #wishlist .product-card img {
+        grid-column: 1 !important;
+        grid-row: 1 / span 3 !important; /* Spans top to bottom beside text */
+        width: 80px !important;
+        height: 80px !important;
+        margin: 0 !important;
+        border-radius: 8px !important;
+        object-fit: cover !important;
+        align-self: center !important;
+    }
+
+    /* 4. Lock Text to the Right Column */
+    #wishlist .product-card h3 {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        font-size: 0.95rem !important;
+        margin: 0 !important;
+        padding-right: 25px !important; /* Prevents text from hitting the heart icon */
+        align-self: end !important;
+    }
+
+    #wishlist .product-card .price {
+        grid-column: 2 !important;
+        grid-row: 2 !important;
+        font-size: 0.9rem !important;
+        margin: 0 !important;
+        font-weight: bold !important;
+    }
+
+    /* 5. Shrink Action Button (Add to Cart / View) */
+    #wishlist .product-card button:not(.wishlist-btn) {
+        grid-column: 2 !important;
+        grid-row: 3 !important;
+        width: auto !important; /* Stops it from stretching */
+        justify-self: start !important; /* Aligns left */
+        padding: 6px 14px !important;
+        font-size: 0.75rem !important;
+        min-height: 32px !important; /* Bypasses bulky mobile touch height */
+        margin: 4px 0 0 0 !important;
+    }
+
+    /* 6. Shrink the Remove/Heart Button in top right */
+    #wishlist .wishlist-btn {
+        top: 12px !important;
+        right: 12px !important;
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    #wishlist .wishlist-btn i {
+        font-size: 12px !important;
+    }
+}
